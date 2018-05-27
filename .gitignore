@@ -1,0 +1,9 @@
+# ignore the archives drectory
+Learning-Concurrent-Programming-In-Scala-Second-Edition
+
+# ignore idea files
+*.iml
+**/.idea
+
+# any targets
+**/target
