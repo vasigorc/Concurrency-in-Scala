@@ -13,7 +13,7 @@ class ExercisesSpec extends BaseSpec {
   }
 
   "fuse" should "yield a pair of values when both are present" in {
-    fuse(Some("Hello"), Some("World")) shouldEqual(Some("Hello", "World"))
+    fuse(Some("Hello"), Some("World")) shouldEqual Some("Hello", "World")
   }
 
   "check" should "return true when testing prime numbers" in {

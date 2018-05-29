@@ -14,4 +14,6 @@ object Exercises {
   def check[T](xs: Seq[T])(pred: T => Boolean): Boolean = {
     Try{xs forall(pred)} getOrElse(false)
   }
+
+  case class Pair[P,Q](val first: P, val second: Q)
 }
