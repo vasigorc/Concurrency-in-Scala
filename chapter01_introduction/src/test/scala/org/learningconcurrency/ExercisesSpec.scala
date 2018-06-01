@@ -19,4 +19,8 @@ class ExercisesSpec extends BaseSpec {
   "check" should "return true when testing prime numbers" in {
     assert(check(List(1,3,5,7,11))(_ % 2 != 0))
   }
+
+  "'abc' string" should "have a total of six permutations" in {
+    permutationsByHand("abc").size shouldEqual(6)
+  }
 }
