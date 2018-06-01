@@ -1,6 +1,7 @@
 package org.learningconcurrency
 
 import scala.util.Try
+import scala.util.matching.Regex
 
 object Exercises {
 
@@ -48,6 +49,9 @@ object Exercises {
   def matcher(regex: String):PartialFunction[String, List[String]] = new PartialFunction[String, List[String]] { // ex 7
     override def isDefinedAt(x: String): Boolean = !apply(x).isEmpty
 
-    override def apply(v1: String): List[String] = ???
+    override def apply(v1: String): List[String] = {
+      val reg = new Regex(regex)
+      reg.findAllIn(v1).toList
+    }
   }
 }
