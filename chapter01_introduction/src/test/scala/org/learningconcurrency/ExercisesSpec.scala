@@ -21,6 +21,10 @@ class ExercisesSpec extends BaseSpec {
   }
 
   "'abc' string" should "have a total of six permutations" in {
-    permutationsByHand("abc").size shouldEqual(6)
+    permutationsByHand("abc").size shouldEqual(permutations("abc") size)
+  }
+
+  "comninations of 1 from a Seq of single element" should "return 1" in {
+    combinationsByHand(1, Seq(1)).size shouldEqual(1)
   }
 }

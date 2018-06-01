@@ -31,4 +31,17 @@ object Exercises {
 
     internalLoop(x.toSeq)
   }
+
+  def combinations(n: Int, xs: Seq[Int]):Iterator[Seq[Int]] = xs.combinations(n)  // ex 6
+
+  def combinationsByHand(n: Int, xs: Seq[Int]):Iterator[Seq[Int]] = {
+    n match {
+      case 0 => Iterator()
+      case 1 => Iterator(xs)
+      case _ => {
+        val lesser = combinationsByHand(n-1, xs)
+        lesser.flatMap(seq=> lesser.map(seq1=>seq1++seq))
+      }
+    }
+  }
 }

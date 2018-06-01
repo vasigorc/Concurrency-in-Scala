@@ -9,6 +9,10 @@ class ExercisesPropSpec extends PropSpec with Checkers with Matchers with Inside
 
   import Exercises._
 
+  def fixture = new {
+    val tenInts = Seq[Int](1,4,9,16,25,34,7,10,8,11)
+  }
+
   lazy val genPairs = for {
     left <- Gen.listOfN(10, Gen.alphaChar)
     right <- Gen.listOfN(10, Gen.alphaChar)
@@ -21,5 +25,11 @@ class ExercisesPropSpec extends PropSpec with Checkers with Matchers with Inside
         firstName == left && lastName == right
       }
     }
+  }
+
+  property("number of combinations should conform to formula"){
+    val dimensions: Gen[Int] = Gen.chooseNum(1, 4, 0) //between 1 and 4 with special case 0
+    val sequence = fixture.tenInts
+    forAll(dimensions)((dim:Int) => combinationsByHand(dim, sequence).size == combinationsResult(sequence.size, dim))
   }
 }
