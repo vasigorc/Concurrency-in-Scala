@@ -27,24 +27,13 @@ object Exercises {
       case Seq(head) => Seq(head.toString)
         //flatMap to get a Seq[String] instead of Seq[Seq[String]]
       case xs => xs.flatMap(nextChar => internalLoop(xs.diff(Seq(nextChar)))
-        .map(xsDiff=>{println(nextChar+:xsDiff);nextChar+:xsDiff}))
+        .map(xsDiff=>{nextChar+:xsDiff}))
     }
 
     internalLoop(x.toSeq)
   }
 
-  def combinations(n: Int, xs: Seq[Int]):Iterator[Seq[Int]] = xs.combinations(n)  // ex 6
-
-  def combinationsByHand(n: Int, xs: Seq[Int]):Iterator[Seq[Int]] = { // ex 6
-    n match {
-      case 0 => Iterator()
-      case 1 => Iterator(xs)
-      case _ => {
-        val lesser = combinationsByHand(n-1, xs)
-        lesser.flatMap(seq=> lesser.map(seq1=>seq1++seq))
-      }
-    }
-  }
+  def combinations(n: Int, xs: Seq[Int]):Iterator[Seq[Int]] = xs.combinations(n)  // ex 6 + see CombinatorialOps.xcombinations
 
   def matcher(regex: String):PartialFunction[String, List[String]] = new PartialFunction[String, List[String]] { // ex 7
     override def isDefinedAt(x: String): Boolean = !apply(x).isEmpty

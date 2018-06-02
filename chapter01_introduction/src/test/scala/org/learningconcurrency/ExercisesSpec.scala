@@ -25,6 +25,16 @@ class ExercisesSpec extends BaseSpec {
   }
 
   "comninations of 1 from a Seq of single element" should "return 1" in {
-    combinationsByHand(1, Seq(1)).size shouldEqual(1)
+    import vkostyukov.CombinatorialOps._
+    Seq(1).toList.xcombinations(1).size shouldEqual(1)
+  }
+
+  "combinations of 2 from a Seq of 4" should "be 6" in {
+    import vkostyukov.CombinatorialOps._
+    List(1,2,3,4).xcombinations(2).size shouldEqual(6)
+  }
+
+  "\"hathatthattthatttt\"" should "yield two matches for regex \"hat[^a]+\"" in {
+    matcher("hat[^a]+")("hathatthattthatttt").size shouldEqual(2)
   }
 }

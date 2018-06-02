@@ -30,6 +30,7 @@ class ExercisesPropSpec extends PropSpec with Checkers with Matchers with Inside
   property("number of combinations should conform to formula"){
     val dimensions: Gen[Int] = Gen.chooseNum(1, 4, 0) //between 1 and 4 with special case 0
     val sequence = fixture.tenInts
-    forAll(dimensions)((dim:Int) => combinationsByHand(dim, sequence).size == combinationsResult(sequence.size, dim))
+    import vkostyukov.CombinatorialOps._
+    forAll(dimensions)((dim:Int) => sequence.toList.xcombinations(dim).size == combinationsResult(sequence.size, dim))
   }
 }
