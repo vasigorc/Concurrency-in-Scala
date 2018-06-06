@@ -1,6 +1,10 @@
 package org.learningconcurrency
 
-object Exercises02 {
+import java.lang.management.ManagementFactory
+
+object Exercises02 extends App{
+
+  busyWaiting()
 
   def parallel[A,B](a: =>A, b: =>B): (A,B) = { // ex 1
     var aholder = null.asInstanceOf[A]
@@ -31,7 +35,7 @@ object Exercises02 {
     }
 
     override def run(): Unit = repeat() match {
-      case Some(action) => action; run()
+      case Some(action) => action(); run()
       case None =>
     }
   }
@@ -40,11 +44,14 @@ object Exercises02 {
     Worker.terminated = true
   }
 
-  class SyncVar[T]{ // ex 3
+  class SyncVar[T]{ // ex 3 - 6
     var t: T = null.asInstanceOf[T]
 
+    def isEmpty = this.synchronized(t == null)
+    def nonEmpty = this.synchronized(!isEmpty)
+
     def get():T = this.synchronized{
-      if(t != null) {
+      if(nonEmpty) {
         val temp = t
         t = null.asInstanceOf[T]
         temp
@@ -52,11 +59,48 @@ object Exercises02 {
     }
 
     def put(x: T):Unit = this.synchronized{
-      if(t == null){
+      if(isEmpty){
         t = x
       } else {
         throw new Exception("variable not consumed yet")
       }
     }
+  }
+
+  def busyWaiting():Unit = {  // ex 4
+    val syncVar = new SyncVar[Int]
+
+    println(s"pid is ${ManagementFactory.getRuntimeMXBean.getName}")
+
+    object Producer extends Thread{
+
+      override def run(): Unit = {
+        var i = 0
+        while(i < 15){
+          if(syncVar.isEmpty){
+            syncVar.put(i)
+            i+=1
+          }
+        }
+      }
+    }
+
+    object Consumer extends Thread{
+
+      override def run(): Unit = {
+        var i = 0
+        while (i < 15){
+          if(syncVar.nonEmpty){
+            log(s"get is ${syncVar.get()}")
+            i+=1
+          }
+        }
+      }
+    }
+
+    Producer.start()
+    Consumer.start()
+
+    Producer.join(); Consumer.join()
   }
 }
