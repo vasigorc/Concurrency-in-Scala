@@ -3,7 +3,7 @@ package org.learningconcurrency
 import scala.util.Try
 import scala.util.matching.Regex
 
-object Exercises {
+object Exercises01 {
 
   def compose[A,B,C](g: B => C, f: A => B): A => C = f.andThen(g) //ex 1
 

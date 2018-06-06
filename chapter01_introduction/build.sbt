@@ -11,11 +11,16 @@ lazy val root = (project in file(".")).
     libraryDependencies ++= {
       val scalaTestVersion = "3.0.5"
       val scalaCheckVersion = "1.14.0"
+      val akkaVersion = "2.4.19"
       Seq(
         scalaTest % Test,
         "org.scalactic" %% "scalactic" % scalaTestVersion,
         "org.scalatest" %% "scalatest" % scalaTestVersion % "test",
-        "org.scalacheck" %% "scalacheck" % scalaCheckVersion % "test"
+        "org.scalacheck" %% "scalacheck" % scalaCheckVersion % "test",
+        "com.typesafe.akka" %% "akka-actor" % akkaVersion,
+        "com.typesafe.akka" %% "akka-slf4j" % akkaVersion,
+        "ch.qos.logback" % "logback-classic" % "1.2.3",
+        "com.typesafe.akka" %% "akka-testkit" % akkaVersion
       )
     }
   )

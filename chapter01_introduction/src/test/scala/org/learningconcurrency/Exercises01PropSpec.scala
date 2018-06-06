@@ -5,9 +5,9 @@ import org.scalacheck.Prop._
 import org.scalatest.prop._
 import org.scalatest.{Inside, Matchers, PropSpec}
 
-class ExercisesPropSpec extends PropSpec with Checkers with Matchers with Inside{
+class Exercises01PropSpec extends PropSpec with Checkers with Matchers with Inside{
 
-  import Exercises._
+  import Exercises01._
 
   def fixture = new {
     val tenInts = Seq[Int](1,4,9,16,25,34,7,10,8,11)

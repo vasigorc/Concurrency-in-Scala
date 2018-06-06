@@ -1,8 +1,8 @@
 package org.learningconcurrency
 
-class ExercisesSpec extends BaseSpec {
+class Exercises01Spec extends BaseSpec {
 
-  import Exercises._
+  import Exercises01._
 
   "One plus one times four" should "equal 8" in {
     compose[Int, Int, Int](_*4, _+1)(1) shouldEqual(8)

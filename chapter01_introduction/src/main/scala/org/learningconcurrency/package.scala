@@ -4,7 +4,15 @@ import scala.annotation.tailrec
 
 package object learningconcurrency {
 
-  def log(msg: String): Unit = println(s"${Thread.currentThread.getName}: $msg")
+  def log(msg: String): Unit = println(s"${Thread.currentThread.getName}: $msg") //from chapter 1
+
+  def thread(body: => Unit): Thread = {
+    val t = new Thread{
+      override def run(): Unit = body
+    }
+    t.start()
+    t
+  }
 
   def factorial(n: Int): Int = {
     @tailrec
