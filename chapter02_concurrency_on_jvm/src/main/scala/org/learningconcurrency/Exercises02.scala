@@ -2,6 +2,8 @@ package org.learningconcurrency
 
 import java.lang.management.ManagementFactory
 
+import scala.reflect.ClassTag
+
 object Exercises02 extends App{
 
   ex6()
@@ -44,13 +46,13 @@ object Exercises02 extends App{
     Worker.terminated = true
   }
 
-  class SyncVar[T]{ // ex 3 - 6
+  class SyncVar[T]{ // ex 3 - 5
     var t: T = null.asInstanceOf[T]
 
     def isEmpty: Boolean = this.synchronized(t == null)
     def nonEmpty: Boolean = this.synchronized(!isEmpty)
 
-    def getWait():T = this.synchronized{
+    def getWait:T = this.synchronized{
       while(isEmpty) this.wait()
 
       val temp = t
@@ -121,7 +123,7 @@ object Exercises02 extends App{
     Producer.join(); Consumer.join()
   }
 
-  def ex6():Unit ={ // ex 5
+  def ex5():Unit ={ // ex 5
     val syncVar = new SyncVar[Int]
 
     val producer= thread {
@@ -135,7 +137,54 @@ object Exercises02 extends App{
     val consumer = thread {
       var i = 0
       while (i<15){
-        log(s"get is ${syncVar.getWait()}")
+        log(s"get is ${syncVar.getWait}")
+        i+=1
+      }
+    }
+
+    producer.join(); consumer.join()
+  }
+
+  class SyncQueue[T](n: Int)(implicit classTag: ClassTag[T]){ // ex 6
+    private val a = new Array[T](n)
+    private var counter = 0
+
+    private def isEmpty = counter == 0
+    private def isFull = counter == n - 1
+
+    def getWait:T = a.synchronized {
+      while (isEmpty) a.wait()
+
+      val tmp = a(counter)
+      counter-=1
+      a.notify()
+      tmp
+    }
+
+    def putWait(x: T):Unit = a.synchronized {
+      while (isFull) a.wait()
+
+      a(counter) =x
+      counter+=1
+      a.notify()
+    }
+  }
+
+  def ex6():Unit ={ // ex 6
+    val syncQueue = new SyncQueue[Int](15)
+
+    val producer= thread {
+      var i = 0
+      while(i < 30){
+        syncQueue.putWait(i)
+        i+=1
+      }
+    }
+
+    val consumer = thread {
+      var i = 0
+      while (i<15){
+        log(s"get is ${syncQueue.getWait}")
         i+=1
       }
     }
