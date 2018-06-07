@@ -4,7 +4,7 @@ import java.lang.management.ManagementFactory
 
 object Exercises02 extends App{
 
-  busyWaiting()
+  ex6()
 
   def parallel[A,B](a: =>A, b: =>B): (A,B) = { // ex 1
     var aholder = null.asInstanceOf[A]
@@ -47,8 +47,24 @@ object Exercises02 extends App{
   class SyncVar[T]{ // ex 3 - 6
     var t: T = null.asInstanceOf[T]
 
-    def isEmpty = this.synchronized(t == null)
-    def nonEmpty = this.synchronized(!isEmpty)
+    def isEmpty: Boolean = this.synchronized(t == null)
+    def nonEmpty: Boolean = this.synchronized(!isEmpty)
+
+    def getWait():T = this.synchronized{
+      while(isEmpty) this.wait()
+
+      val temp = t
+      t = null.asInstanceOf[T]
+      this.notify()
+      temp
+    }
+
+    def putWait(x: T):Unit = this.synchronized{
+      while (nonEmpty) this.wait()
+
+      t = x
+      this.notify()
+    }
 
     def get():T = this.synchronized{
       if(nonEmpty) {
@@ -67,10 +83,11 @@ object Exercises02 extends App{
     }
   }
 
-  def busyWaiting():Unit = {  // ex 4
-    val syncVar = new SyncVar[Int]
+    def busyWaiting():Unit = {  // ex 4
 
     println(s"pid is ${ManagementFactory.getRuntimeMXBean.getName}")
+
+    val syncVar = new SyncVar[Int]
 
     object Producer extends Thread{
 
@@ -85,22 +102,44 @@ object Exercises02 extends App{
       }
     }
 
-    object Consumer extends Thread{
+  object Consumer extends Thread{
 
-      override def run(): Unit = {
-        var i = 0
-        while (i < 15){
-          if(syncVar.nonEmpty){
-            log(s"get is ${syncVar.get()}")
-            i+=1
-          }
+    override def run(): Unit = {
+      var i = 0
+      while (i < 15){
+        if(syncVar.nonEmpty){
+          log(s"get is ${syncVar.get()}")
+          i+=1
         }
       }
     }
+  }
 
     Producer.start()
     Consumer.start()
 
     Producer.join(); Consumer.join()
+  }
+
+  def ex6():Unit ={ // ex 5
+    val syncVar = new SyncVar[Int]
+
+    val producer= thread {
+      var i = 0
+      while(i < 15){
+        syncVar.putWait(i)
+        i+=1
+    }
+  }
+
+    val consumer = thread {
+      var i = 0
+      while (i<15){
+        log(s"get is ${syncVar.getWait()}")
+        i+=1
+      }
+    }
+
+    producer.join(); consumer.join()
   }
 }
