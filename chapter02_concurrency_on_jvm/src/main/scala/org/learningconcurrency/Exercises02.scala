@@ -2,6 +2,7 @@ package org.learningconcurrency
 
 import java.lang.management.ManagementFactory
 
+import scala.collection.mutable
 import scala.reflect.ClassTag
 
 object Exercises02 extends App{
@@ -146,27 +147,24 @@ object Exercises02 extends App{
   }
 
   class SyncQueue[T](n: Int)(implicit classTag: ClassTag[T]){ // ex 6
-    private val a = new Array[T](n)
-    private var counter = 0
+    private val queue = new mutable.Queue[T]
 
-    private def isEmpty = counter == 0
-    private def isFull = counter == n - 1
+    private def isEmpty = queue.isEmpty
+    private def isFull = queue.size == n
 
-    def getWait:T = a.synchronized {
-      while (isEmpty) a.wait()
+    def getWait:T = queue.synchronized {
+      while (isEmpty) queue.wait()
 
-      val tmp = a(counter)
-      counter-=1
-      a.notify()
+      val tmp = queue.dequeue()
+      queue.notify()
       tmp
     }
 
-    def putWait(x: T):Unit = a.synchronized {
-      while (isFull) a.wait()
+    def putWait(x: T):Unit = queue.synchronized {
+      while (isFull) queue.wait()
 
-      a(counter) =x
-      counter+=1
-      a.notify()
+      queue.enqueue(x)
+      queue.notify()
     }
   }
 
@@ -188,7 +186,6 @@ object Exercises02 extends App{
         i+=1
       }
     }
-
     producer.join(); consumer.join()
   }
 }
