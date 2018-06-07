@@ -3,7 +3,7 @@ package org.learningconcurrency.concurrency_on_jvm
 import java.util.concurrent.{ForkJoinPool, RecursiveAction}
 import org.learningconcurrency._
 
-object ex02_07 extends App{
+object ex02_07 {
 
   object SynchronizedProtectedUid{
     private var uidCount = 0L
@@ -16,7 +16,7 @@ object ex02_07 extends App{
   }
 
   class Account(val name: String, var money: Int){
-    val uid = SynchronizedProtectedUid.getUniqueId()
+    val uid: Long = SynchronizedProtectedUid.getUniqueId()
 
     override def toString: String = name.concat(", uid: "+uid)
   }
@@ -41,10 +41,9 @@ object ex02_07 extends App{
 
     override def compute(): Unit = accounts.size match {
       case 0 =>
-      case 1 => {
+      case 1 =>
         val head = accounts.head
         send(head, target, head.money)
-      }
       case _ => invokeAll(TransferTask(accounts.drop(1), target), TransferTask(Set(accounts.head), target))
     }
   }
