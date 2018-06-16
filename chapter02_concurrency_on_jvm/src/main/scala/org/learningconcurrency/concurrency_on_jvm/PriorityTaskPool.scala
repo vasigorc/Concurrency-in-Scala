@@ -16,24 +16,20 @@ trait PriorityTaskPool {
     setDaemon(true)
     def poll() = tasks.synchronized {
       while (tasks.isEmpty) tasks.wait()
-      val res = tasks.dequeue()
-      res.task
+      tasks.dequeue()
     }
 
-    override def run(): Unit = while(true) {
-      val task = poll()
-      task()
+    override def run() = {
+      while (true) {
+        poll() match {
+          case Task(_, task) => task()
+        }
+      }
     }
-  }
-
-  def worker: Worker = {
-    val w = new Worker
-    w.start()
-    w
   }
 
   def asynchronous(priority: Int)(task: () => Unit):Unit = tasks.synchronized {
     tasks.enqueue(Task(priority, task))
-    tasks.notify()
+    tasks.notifyAll()
   }
 }

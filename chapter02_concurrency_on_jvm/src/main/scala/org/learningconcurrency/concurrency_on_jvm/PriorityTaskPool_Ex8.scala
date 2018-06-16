@@ -5,7 +5,8 @@ object PriorityTaskPool_Ex8 extends App with PriorityTaskPool {
 
   import org.learningconcurrency._
 
-  worker
+  private val worker = new Worker
+  worker.start()
 
   asynchronous(2){ () => log("Hello ")}
   asynchronous(1){ () => log("Bonjour ")}
