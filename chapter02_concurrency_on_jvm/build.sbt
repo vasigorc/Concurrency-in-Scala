@@ -11,5 +11,5 @@ lazy val root = (project in file(".")).
     )),
     name := "chapter02_concurrency_on_jvm",
     libraryDependencies += scalaTest % Test,
-    mainClass in Compile := Some("org.learningconcurrency.concurrency_on_jvm.PriorityTaskPool")
+    mainClass in Compile := Some("org.learningconcurrency.concurrency_on_jvm.PriorityTaskPool_Ex8")
   ).dependsOn(chapter_01)

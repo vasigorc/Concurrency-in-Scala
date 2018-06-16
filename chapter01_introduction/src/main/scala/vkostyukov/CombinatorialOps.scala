@@ -27,7 +27,17 @@ object CombinatorialOps {
         case _ => Nil
       }
 
-    def xsubsets: List[List[A]] = ???
+    /**
+     * The implementation is straightforward - combinations of all the possible sizes should be merged together.
+     * That may be done by List’s foldLeft operation. The total number of subsets might be obtained from variations formula:
+     *
+     *                  S_n = sum(i=1..n) {C_i,n} = 2^n
+     *
+     * Time - O(S_n)
+     * Space - O(S_n) There are 2^n subset of an n-size set. It’s choice of two: every set’s element is either taken or not into the particular subset.
+     */
+    def xsubsets: List[List[A]] = (2 to l.size).foldLeft(l.xcombinations(1))((a,i) => l.xcombinations(i) ::: a)
+
     def xvariations(n: Int): List[List[A]] = ???
     def xpermutations: List[List[A]] = ???
 
