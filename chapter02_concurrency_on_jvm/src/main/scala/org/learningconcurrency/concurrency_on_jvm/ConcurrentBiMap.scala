@@ -52,4 +52,10 @@ class ConcurrentBiMap [K, V] {
   def size: Int = byKeys.size
 
   def iterator: Iterator[(K, V)] = byKeys.iterator
+
+  def replace(k1: K, v1: V, k2: K, v2: V): Unit = {
+    if(containsKey(k1) && Objects.equals(v1, getValue(k1).get)){
+      put(k2, v2)
+    }
+  }
 }
