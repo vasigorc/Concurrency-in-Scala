@@ -15,10 +15,12 @@ class ConcurrentBiMap [K, V] {
 
   def containsKey(k: K): Boolean = byKeys.contains(k)
 
+  def getKey(v: V):Option[K] = byValues.get(v)
+
   def getValue(k: K): Option[V] = byKeys.get(k)
 
   // should return previous value
-  def put(k: K, v: V):Option[(K, V)] = {
+  def put(k: K, v: V):Option[(K, V)] = this.synchronized {
     //java's concurrent hash map doesn't allow null keys or values
     if(checkKey(k) && checkValue(v)){
       //if key is present and value is the same, nothing to do here
@@ -33,17 +35,21 @@ class ConcurrentBiMap [K, V] {
     } else None
   }
 
-  def removeKey(k: K): Option[V] = {
+  def removeKey(k: K): Option[V] = this.synchronized {
     byKeys.remove(k).map(value => {
       byValues.remove(value)
       value
     })
   }
 
-  def removeValue(v: V):Option[K] = {
+  def removeValue(v: V):Option[K] = this.synchronized {
     byValues.remove(v).map(key => {
       byKeys.remove(key)
       key
     })
   }
+
+  def size: Int = byKeys.size
+
+  def iterator: Iterator[(K, V)] = byKeys.iterator
 }
