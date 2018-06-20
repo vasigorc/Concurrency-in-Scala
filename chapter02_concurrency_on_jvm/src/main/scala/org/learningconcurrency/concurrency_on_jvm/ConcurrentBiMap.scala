@@ -28,10 +28,10 @@ class ConcurrentBiMap [K, V] {
         return Some(k, v)
       }
       //should be safe to do get since our map doesn't contain null keys or values
-      val oldKvPair: (K, V) = byKeys.get(k).map(oldValue=> (k, oldValue)).get
+      val response = byKeys.get(k).map(oldValue=> (k, oldValue))
       byKeys.put(k, v)
       byValues.put(v, k)
-      Some(oldKvPair)
+      response
     } else None
   }
 
@@ -55,6 +55,7 @@ class ConcurrentBiMap [K, V] {
 
   def replace(k1: K, v1: V, k2: K, v2: V): Unit = this.synchronized {
     if(containsKey(k1) && Objects.equals(v1, getValue(k1).get)){
+      removeKey(k1)
       put(k2, v2)
     }
   }
