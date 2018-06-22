@@ -20,7 +20,7 @@ class ConcurrentBiMap [K, V] {
   def getValue(k: K): Option[V] = byKeys.get(k)
 
   // should return previous value
-  def put(k: K, v: V):Option[(K, V)] = this.synchronized {
+  def put(k: K, v: V):Option[(K, V)] = {
     //java's concurrent hash map doesn't allow null keys or values
     if(checkKey(k) && checkValue(v)){
       //if key is present and value is the same, nothing to do here
@@ -28,24 +28,29 @@ class ConcurrentBiMap [K, V] {
         return Some(k, v)
       }
       //should be safe to do get since our map doesn't contain null keys or values
-      val response = byKeys.get(k).map(oldValue=> (k, oldValue))
-      byKeys.put(k, v)
-      byValues.put(v, k)
+      val response = getValue(k).map(oldValue=> (k, oldValue))
+      byKeys.synchronized {byKeys.put(k, v)}
+      byValues.synchronized {byValues.put(v, k)}
       response
     } else None
   }
 
+  def removeFromBothMaps(k: K, v: V): Unit = {
+    byKeys.synchronized{byKeys.remove(k)}
+    byValues.synchronized{byValues.remove(v)}
+  }
+
   def removeKey(k: K): Option[V] = this.synchronized {
-    byKeys.remove(k).map(value => {
-      byValues.remove(value)
-      value
+    getValue(k).map(v => {
+      removeFromBothMaps(k,v)
+      v
     })
   }
 
   def removeValue(v: V):Option[K] = this.synchronized {
-    byValues.remove(v).map(key => {
-      byKeys.remove(key)
-      key
+    getKey(v).map(k=> {
+      removeFromBothMaps(k, v)
+      k
     })
   }
 
@@ -53,7 +58,7 @@ class ConcurrentBiMap [K, V] {
 
   def iterator: Iterator[(K, V)] = byKeys.iterator
 
-  def replace(k1: K, v1: V, k2: K, v2: V): Unit = this.synchronized {
+  def replace(k1: K, v1: V, k2: K, v2: V): Unit = {
     if(containsKey(k1) && Objects.equals(v1, getValue(k1).get)){
       removeKey(k1)
       put(k2, v2)
