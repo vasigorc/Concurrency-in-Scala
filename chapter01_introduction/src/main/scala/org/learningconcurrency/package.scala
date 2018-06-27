@@ -1,6 +1,9 @@
 package org
 
+import java.time.LocalTime
+
 import scala.annotation.tailrec
+import scala.util.Random
 
 package object learningconcurrency {
 
@@ -28,7 +31,7 @@ package object learningconcurrency {
     * @param seqSize
     * @param dimension
     */
-  def combinationsResult(seqSize: Int, dimension: Int) = {
+  def combinationsResult(seqSize: Int, dimension: Int): Int = {
     factorial(seqSize) / factorial(dimension) * factorial(seqSize-dimension)
   }
 
@@ -44,4 +47,6 @@ package object learningconcurrency {
       }
     }
   }
+
+  def randomTime:LocalTime = LocalTime.of(16+Random.nextInt(4), Random.nextInt(60)) //hour is supposedly within 4 hours after 16
 }
