@@ -26,7 +26,7 @@ class Colleague(friends: Seq[ActorRef]) extends Actor with ActorLogging{
       implicit val ec: ExecutionContextExecutor = context.dispatcher
       context.system.scheduler.scheduleOnce(delay milliseconds){
         randomUnreached.foreach(unreached => {
-          log.info("colleague {} sends message to a random friend", unreached.path.name)
+          log.info("colleague {} sends message to a random friend({})", self.path.name, unreached.path.name)
           unreached ! MeetUp(randomTime, agreedParties)
         })
       }
