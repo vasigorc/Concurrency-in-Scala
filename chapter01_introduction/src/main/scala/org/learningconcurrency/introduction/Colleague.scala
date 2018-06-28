@@ -35,13 +35,21 @@ class Colleague(friends: Seq[ActorRef]) extends Actor with ActorLogging{
   }
 
   override def receive: Receive = {
-    case MeetUp(suggestedTime, attenders) => {
+    case MeetUp(suggestedTime, attenders) =>
       if(time.isEmpty) {
-        time = Some(suggestedTime)
-        agreedParties ++: attenders
+        acceptInvite(suggestedTime, attenders)
         sender() ! ConfirmMeetUp(suggestedTime, agreedParties)
+      } else if(attenders.size > agreedParties.size){
+        acceptInvite(suggestedTime, attenders)
+      } else {
+        time.foreach(sender() ! MeetUp(_, agreedParties))
       }
-    }
+    case ConfirmMeetUp(suggestedTime, attenders) =>   ???
+  }
+
+  def acceptInvite(suggestedTime: LocalTime, attenders: Set[ActorRef]):Unit = {
+    time = Some(suggestedTime)
+    agreedParties ++: attenders
   }
 
   def randomUnreached: Option[ActorRef] = {
