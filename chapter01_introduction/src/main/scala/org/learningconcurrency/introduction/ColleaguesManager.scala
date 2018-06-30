@@ -1,6 +1,7 @@
 package org.learningconcurrency.introduction
 
-import akka.actor.{Actor, ActorLogging, PoisonPill, SupervisorStrategy}
+import akka.actor.{Actor, ActorLogging, ActorRef, PoisonPill, Props, SupervisorStrategy}
+import org.learningconcurrency.introduction.ColleaguesManager.GetState
 
 import scala.collection.immutable
 
@@ -18,6 +19,15 @@ class ColleaguesManager extends Actor with ActorLogging{
     case GameOver(time, attenders) =>
       log.info("{} agreed to meet at {} in a local bar", attenders.mkString(", "), time)
       context.children.foreach(_ ! PoisonPill)
-      context.system.terminate()
+    case GetState(receiver) => receiver ! context.children
   }
+}
+
+object ColleaguesManager{
+  val name = s"colleagues manager"
+  val path = s"user/$name"
+
+  case class GetState(receiver: ActorRef)
+
+  def props()= Props(new ColleaguesManager())
 }

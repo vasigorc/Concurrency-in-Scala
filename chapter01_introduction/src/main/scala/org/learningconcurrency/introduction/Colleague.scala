@@ -29,7 +29,6 @@ class Colleague(friends: Seq[String]) extends Actor with ActorLogging{
         inviteUnreachedColleague()
       }
     }
-
   }
 
   override def receive: Receive = {
