@@ -26,10 +26,7 @@ class Colleague(friends: Seq[String]) extends Actor with ActorLogging{
       agreedParties += self
       implicit val ec: ExecutionContextExecutor = context.dispatcher
       context.system.scheduler.scheduleOnce(delay milliseconds){
-        randomUnreached.foreach(unreached => {
-          log.info("colleague {} sends message to a random friend({})", self.path.name, unreached)
-          context.actorSelection(s"../$unreached") ! MeetUp(randomTime, agreedParties)
-        })
+        inviteUnreachedColleague()
       }
     }
 
@@ -53,7 +50,16 @@ class Colleague(friends: Seq[String]) extends Actor with ActorLogging{
     time = Some(suggestedTime)
     agreedParties += self
     agreedParties ++: attenders
-    if(agreedParties.size == 3) context.parent ! GameOver(time.get, agreedParties)
+    if(agreedParties.size >= 3) context.parent ! GameOver(time.get, agreedParties)
+    else inviteUnreachedColleague()
+
+  }
+
+  private def inviteUnreachedColleague(): Unit = {
+    randomUnreached.foreach(unreached => {
+      log.info("colleague {} sends message to a random friend({})", self.path.name, unreached)
+      context.actorSelection(s"../$unreached") ! MeetUp(randomTime, agreedParties)
+    })
   }
 
   def randomUnreached: Option[String] = {
