@@ -10,7 +10,7 @@ class ColleaguesManager extends Actor with ActorLogging{
 
   override def preStart(): Unit = {
     val colleagues: immutable.Seq[String] = (1 to 4).map("colleague_"+_)
-    colleagues.foreach(c => props(colleagues.diff(Seq(c))))
+    colleagues.foreach(c => context.actorOf(props(colleagues.diff(Seq(c)))))
   }
 
   override def supervisorStrategy: SupervisorStrategy = super.supervisorStrategy
