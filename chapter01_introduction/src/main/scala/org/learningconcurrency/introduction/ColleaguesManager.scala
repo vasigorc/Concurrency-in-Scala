@@ -1,6 +1,6 @@
 package org.learningconcurrency.introduction
 
-import akka.actor.{Actor, ActorLogging, ActorRef, PoisonPill, Props, SupervisorStrategy}
+import akka.actor._
 import org.learningconcurrency.introduction.ColleaguesManager.GetState
 
 import scala.collection.immutable
@@ -9,11 +9,10 @@ class ColleaguesManager extends Actor with ActorLogging{
   import Colleague._
 
   override def preStart(): Unit = {
+    super.preStart()
     val colleagues: immutable.Seq[String] = (1 to 4).map("colleague_"+_)
-    colleagues.foreach(c => context.actorOf(props(colleagues.diff(Seq(c)))))
+    colleagues.foreach(aName => context.actorOf(props(colleagues.diff(Seq(aName))), aName))
   }
-
-  override def supervisorStrategy: SupervisorStrategy = super.supervisorStrategy
 
   override def receive: Receive = {
     case GameOver(time, attenders) =>
