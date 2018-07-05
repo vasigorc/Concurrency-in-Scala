@@ -14,6 +14,6 @@ with WordSpecLike with MustMatchers with StopSystemAfterAll {
   "expect GameOver message for ColleaguesManager" in {
     val colleaguesmanager = system.actorOf(Props[ColleaguesManager], "colleaguesmanager")
     colleaguesmanager ! GetState(testActor)
-    expectMsg(15 seconds, immutable.Iterable[ActorRef]())
+    expectMsg(30 seconds, immutable.Iterable[ActorRef]())
   }
 }
