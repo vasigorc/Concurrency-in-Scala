@@ -15,17 +15,17 @@ class Colleague(friends: Seq[String]) extends Actor with ActorLogging{
   import org.learningconcurrency.introduction.Colleague._
 
   var time: Option[LocalTime] = None
-  val agreedParties: mutable.Set[ActorRef] = mutable.Set[ActorRef]()
+  var agreedParties: Set[ActorRef] = Set[ActorRef]()
 
   inviteSomeone()
 
   private def inviteSomeone(): Unit = {
-    val delay = Random.nextInt(10000)
+    val delay = Random.nextInt(10)
     if(time.isEmpty){
       //messaging is only initialized if no meetup message is already received
       agreedParties += self
       implicit val ec: ExecutionContextExecutor = context.dispatcher
-      context.system.scheduler.scheduleOnce(delay milliseconds){
+      context.system.scheduler.scheduleOnce(1+delay seconds){
         inviteUnreachedColleague()
       }
     }
@@ -34,20 +34,27 @@ class Colleague(friends: Seq[String]) extends Actor with ActorLogging{
   override def receive: Receive = {
     case MeetUp(suggestedTime, attenders) =>
       if(time.isEmpty || attenders.size > agreedParties.size) {
-        acceptInvite(suggestedTime, attenders)
-        sender() ! ConfirmMeetUp(suggestedTime, agreedParties)
+        if(acceptInvite(suggestedTime, attenders))
+          context.parent ! GameOver(time.get, agreedParties)
+        else {
+          sender() ! ConfirmMeetUp(suggestedTime, agreedParties)
+          self ! PassOnTheNews
+        }
+      } else {
+        time.foreach(sender() ! MeetUp(_, agreedParties))
       }
-    case MeetUp(_, _) => time.foreach(sender() ! MeetUp(_, agreedParties))
     case ConfirmMeetUp(suggestedTime, attenders) =>
       acceptInvite(suggestedTime, attenders)
+    case PassOnTheNews =>
+      inviteUnreachedColleague()
   }
 
-  def acceptInvite(suggestedTime: LocalTime, attenders: Set[ActorRef]):Unit = {
+  def acceptInvite(suggestedTime: LocalTime, attenders: Set[ActorRef]):Boolean = {
     time = Some(suggestedTime)
     agreedParties += self
-    agreedParties ++: attenders
-    if(agreedParties.size >= 3) context.parent ! GameOver(time.get, agreedParties)
-    else inviteUnreachedColleague()
+    agreedParties ++= attenders
+    if(agreedParties.size >= 3) true
+    else false
 
   }
 
@@ -71,6 +78,7 @@ object Colleague {
   case class MeetUp(time: LocalTime, attenders: Set[ActorRef]) extends Msg
   case class ConfirmMeetUp(time: LocalTime, attenders: Set[ActorRef]) extends Msg
   case class GameOver(time: LocalTime, attenders: Set[ActorRef]) extends Msg
+  case class PassOnTheNews() extends Msg
 
   val name = s"colleague_${UUID.randomUUID().toString}"
   val path = s"user/$name"
