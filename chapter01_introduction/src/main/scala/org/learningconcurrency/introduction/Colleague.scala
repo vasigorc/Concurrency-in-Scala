@@ -53,8 +53,7 @@ class Colleague(friends: Seq[String]) extends Actor with ActorLogging{
     time = Some(suggestedTime)
     agreedParties += self
     agreedParties ++= attenders
-    if(agreedParties.size >= 3) true
-    else false
+    agreedParties.size >= 3
 
   }
 
