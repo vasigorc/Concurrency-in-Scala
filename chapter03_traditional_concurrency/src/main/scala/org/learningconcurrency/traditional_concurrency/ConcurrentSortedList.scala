@@ -17,18 +17,18 @@ class ConcurrentSortedList[T] (implicit val ord:Ordering[T]){
 
   val first = new AtomicReference[Option[Node]](None)
 
-  def add(node: AtomicReference[Option[Node]], x: T): Unit = {
+  private def add(node: AtomicReference[Option[Node]], x: T): Unit = {
     import Ordered._
 
     val head = node.get
     head match {
       case None => if(!first.compareAndSet(None, Some(Node(x))))
-        add(x)
+        add(node, x)
       case cur @ Some(Node(y, next)) => if(x <= y){
         if(!first.compareAndSet(cur, Some(Node(x, new AtomicReference[Option[Node]](cur)))))
           add(node, x)
       } else {
-        add(cur.get.next, x)
+        add(next, x)
       }
     }
   }
@@ -38,7 +38,7 @@ class ConcurrentSortedList[T] (implicit val ord:Ordering[T]){
   }
 
   def iterator: Iterator[T] = new Iterator[T] {
-    var current = first.get
+    private var current = first.get
 
     override def hasNext: Boolean = current.nonEmpty
 

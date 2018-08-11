@@ -3,6 +3,7 @@ package org
 import java.time.LocalTime
 
 import scala.annotation.tailrec
+import scala.concurrent.ExecutionContext
 import scala.util.Random
 
 package object learningconcurrency {
@@ -49,4 +50,10 @@ package object learningconcurrency {
   }
 
   def randomTime:LocalTime = LocalTime.of(16+Random.nextInt(4), Random.nextInt(60)) //hour is supposedly within 4 hours after 16
+
+  def execute(body: => Unit) = ExecutionContext.global.execute(
+    new Runnable {
+      override def run(): Unit = body
+    }
+  )
 }
