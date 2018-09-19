@@ -5,6 +5,7 @@ import java.time.LocalTime
 import scala.annotation.tailrec
 import scala.concurrent.ExecutionContext
 import scala.util.Random
+import scala.util.control.NonFatal
 
 package object learningconcurrency {
 
@@ -56,4 +57,35 @@ package object learningconcurrency {
       override def run(): Unit = body
     }
   )
+
+  def closeAndAddSuppressed[T <: AutoCloseable](exception: Throwable, resource: T): Unit = {
+    if(exception != null){
+      try{
+        resource.close()
+      } catch {
+        case NonFatal(suppressed) =>
+          exception.addSuppressed(suppressed)
+      }
+    } else {
+      resource.close()
+    }
+  }
+
+  //from https://medium.com/@dkomanov/scala-try-with-resources-735baad0fd7d
+  def withRessources[T <: AutoCloseable, V](r: => T)(f: T => V): V = {
+    val resource: T = r
+    require(resource != null, "resource is null")
+    var exception: Throwable = null
+    try {
+      f(resource)
+    } catch {
+      case NonFatal(e) =>
+        exception = e
+        throw e
+    } finally {
+      closeAndAddSuppressed(exception, resource)
+    }
+  }
+
+  def withRessourcesUnit[T <: AutoCloseable](r: => T)(f: T => Unit): Unit = withRessources(r)
 }
