@@ -26,7 +26,7 @@ package object traditional_concurrency {
     tmp.deleteOnExit()
 
     val out = new ObjectOutputStream(new FileOutputStream(tmp))
-    withRessourcesUnit(out){_ =>
+    withRessources(out){_ =>
       out.writeObject(() => block)
     }
 
@@ -47,10 +47,10 @@ package object traditional_concurrency {
   class StreamGobbler(filePath: String) extends Runnable{
     override def run(): Unit = {
     val in = new ObjectInputStream(new FileInputStream(filePath))
-      withRessourcesUnit(in){ _ =>
+      withRessources(in){ _ =>
         val f0 = in.readObject().asInstanceOf[()=>Any]
         val out = new ObjectOutputStream(new FileOutputStream(filePath))
-        withRessourcesUnit(out){_ =>
+        withRessources(out){_ =>
           Try(out.writeObject(f0())) recoverWith { case t => Try(out.writeObject(t)) }
         }
       }

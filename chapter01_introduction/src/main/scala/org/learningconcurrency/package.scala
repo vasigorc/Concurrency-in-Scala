@@ -86,6 +86,4 @@ package object learningconcurrency {
       closeAndAddSuppressed(exception, resource)
     }
   }
-
-  def withRessourcesUnit[T <: AutoCloseable](r: => T)(f: T => Unit): Unit = withRessources(r)(f)
 }
