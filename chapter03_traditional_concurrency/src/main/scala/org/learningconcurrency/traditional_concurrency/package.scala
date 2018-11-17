@@ -1,7 +1,6 @@
 package org.learningconcurrency
 
 import java.io._
-import java.util.concurrent.Callable
 import java.util.regex.Pattern
 
 import scala.util.Try
@@ -9,7 +8,6 @@ import scala.util.Try
 package object traditional_concurrency {
 
   import scala.sys.process._
-  import org.learningconcurrency._
   /*
     Exercise 8. Implement a method spawn that given a block of Scala code, starts a new
     JVM process and runs the specified block in the new process.

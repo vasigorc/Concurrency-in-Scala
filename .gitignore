@@ -7,3 +7,8 @@ Learning-Concurrent-Programming-In-Scala-Second-Edition
 
 # any targets
 **/target
+
+# ignore .travis.yml
+.travis.yml
+.gitignore
+.directory
