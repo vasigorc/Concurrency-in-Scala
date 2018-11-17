@@ -6,8 +6,10 @@ import scala.annotation.tailrec
 
 class Pool[T] {
 
+  type TimeStampedList = (List[T], Long)
+
   val parallelism = Runtime.getRuntime.availableProcessors * 32
-  val buckets = new Array[AtomicReference[(List[T], Long)]](parallelism)
+  val buckets = new Array[AtomicReference[TimeStampedList]](parallelism)
   for (i <- 0 until buckets.length) buckets(i) = new AtomicReference((Nil, 0L))
 
   def add(x: T): Unit = {
@@ -59,5 +61,13 @@ class Pool[T] {
     }
 
     scan(-1L)
+  }
+
+  /*
+    Augment the lock-free pool implementation from this chapter with a foreach operation, used to traverse all the
+    elements in the pool. Then make another version of foreach that is both lock-free and linearizable.
+   */
+  def foreach[U](tlFunc: TimeStampedList => U): Unit = {
+    buckets.foreach(elem => tlFunc(elem.get()))
   }
 }
