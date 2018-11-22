@@ -1,7 +1,5 @@
 package org.learningconcurrency.traditional_concurrency
 
-import java.util.concurrent.ForkJoinPool
-
 import org.learningconcurrency.BaseSpec
 
 import scala.concurrent.ExecutionContext
@@ -19,11 +17,9 @@ class ConcurrentSortedListSpec extends BaseSpec{
     private val exCtx = ExecutionContext.global
     for(i <- 0 until 100)
       exCtx.execute{
-        new Runnable {
-          override def run(): Unit = {
-            val probe = Random.nextInt(200)
-            sample.add(probe)
-          }
+        () => {
+          val probe = Random.nextInt(200)
+          sample.add(probe)
         }
       }
 

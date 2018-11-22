@@ -8,9 +8,9 @@ class Pool[T] {
 
   type TimeStampedList = (List[T], Long)
 
-  val parallelism = Runtime.getRuntime.availableProcessors * 32
+  val parallelism: Int = Runtime.getRuntime.availableProcessors * 32
   val buckets = new Array[AtomicReference[TimeStampedList]](parallelism)
-  for (i <- 0 until buckets.length) buckets(i) = new AtomicReference((Nil, 0L))
+  for (i <- buckets.indices) buckets(i) = new AtomicReference((Nil, 0L))
 
   def add(x: T): Unit = {
     val i = (Thread.currentThread.getId ^ x.## % buckets.length).toInt
@@ -50,7 +50,7 @@ class Pool[T] {
         }
 
         retry() match {
-          case removed@Some(value) => return removed
+          case removed@Some(_) => return removed
           case None =>
         }
 
@@ -67,7 +67,7 @@ class Pool[T] {
     Augment the lock-free pool implementation from this chapter with a foreach operation, used to traverse all the
     elements in the pool. Then make another version of foreach that is both lock-free and linearizable.
    */
-  def foreach[U](tlFunc: TimeStampedList => U): Unit = {
-    buckets.foreach(elem => tlFunc(elem.get()))
+  def foreach[U](tlFunc: T => U): Unit = {
+    buckets.map(_ get()) flatMap (_._1) foreach tlFunc
   }
 }
