@@ -2,6 +2,8 @@ package org.learningconcurrency.traditional_concurrency
 
 import java.util.concurrent.atomic.AtomicReference
 
+import org.learningconcurrency.traditional_concurrency.helpers.MyAtomicReference
+
 import scala.annotation.tailrec
 
 class Pool[T] {
@@ -9,8 +11,8 @@ class Pool[T] {
   type TimeStampedList = (List[T], Long)
 
   val parallelism: Int = Runtime.getRuntime.availableProcessors * 32
-  val buckets = new Array[AtomicReference[TimeStampedList]](parallelism)
-  for (i <- buckets.indices) buckets(i) = new AtomicReference((Nil, 0L))
+  val buckets = new Array[MyAtomicReference[TimeStampedList]](parallelism)
+  for (i <- buckets.indices) buckets(i) = new MyAtomicReference((Nil, 0L))
 
   def add(x: T): Unit = {
     val i = (Thread.currentThread.getId ^ x.## % buckets.length).toInt

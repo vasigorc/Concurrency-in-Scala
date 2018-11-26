@@ -1,5 +1,6 @@
 package org.learningconcurrency.traditional_concurrency
 
+import org.learningconcurrency.traditional_concurrency.helpers.TraditionalConcurrencyHelpers
 import org.learningconcurrency.{BaseSpec, thread}
 
 class PoolSpec extends BaseSpec {
@@ -26,4 +27,12 @@ class PoolSpec extends BaseSpec {
     counter shouldEqual num * p
   }
 
+  behavior of "removeO1"
+
+  "method" should "remove an element from the pool with time O(1)" in new IntPoolBuilder {
+    import org.learningconcurrency.traditional_concurrency.helpers.DefaultAtomicRefCounters._
+    import TraditionalConcurrencyHelpers._
+    //call pool.removeO1 (not implemented yet)
+    pool.buckets.countGets() shouldEqual 1
+  }
 }

@@ -25,4 +25,10 @@ object Dependencies {
     "io.monix" %% "monix" % monixVersion,
     "io.monix" %% "monix-cats" % monixVersion
   )
+  
+  val simulacrumVersion = "0.13.0"
+  
+  val simulacrum: Seq[ModuleID] = Seq(
+    "com.github.mpilquist" %% "simulacrum" % simulacrumVersion
+  )
 }
