@@ -1,7 +1,7 @@
 package org.learningconcurrency.traditional_concurrency
 
-import org.scalatest.{FlatSpec, Matchers}
 import org.scalatest.concurrent.Conductors
+import org.scalatest.{FlatSpec, Matchers}
 
 class TreiberStackSpec extends FlatSpec with Matchers with Conductors {
 
@@ -24,14 +24,14 @@ class TreiberStackSpec extends FlatSpec with Matchers with Conductors {
 
     val stack = new TreiberStack[Int]
 
-    thread("producer"){
+    threadNamed("producer"){
       stack.push(1)
       stack.push(2)
 
       beat should be (1)
     }
 
-    thread("consumer"){
+    threadNamed("consumer"){
       waitForBeat(1)
 
       stack.pop() should be (2)

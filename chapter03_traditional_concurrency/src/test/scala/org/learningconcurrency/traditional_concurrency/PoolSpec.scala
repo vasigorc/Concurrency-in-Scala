@@ -1,12 +1,12 @@
 package org.learningconcurrency.traditional_concurrency
 
-import org.learningconcurrency.traditional_concurrency.helpers.TraditionalConcurrencyHelpers
+import org.learningconcurrency.traditional_concurrency.aop.{ArrayOfAtomicsGetCallsCounter, ArrayOfAtomicsWrapper}
 import org.learningconcurrency.{BaseSpec, thread}
 
 class PoolSpec extends BaseSpec {
 
   trait IntPoolBuilder {
-    val pool = new Pool[Int]
+    val pool = new Pool[Int] with ArrayOfAtomicsWrapper[(List[Int], Long)] with ArrayOfAtomicsGetCallsCounter[(List[Int], Long)]
     val p = 8
     val num = 1000
   }
@@ -30,9 +30,18 @@ class PoolSpec extends BaseSpec {
   behavior of "removeO1"
 
   "method" should "remove an element from the pool with time O(1)" in new IntPoolBuilder {
-    import org.learningconcurrency.traditional_concurrency.helpers.DefaultAtomicRefCounters._
-    import TraditionalConcurrencyHelpers._
-    //call pool.removeO1 (not implemented yet)
-    pool.buckets.countGets() shouldEqual 1
+    pool.add(1)
+    pool.resetGetCallsCounter()
+    pool.removeO1() should be (Some(1))
+    pool.getGetCallsCounter should equal (1)
+  }
+
+  behavior of "remove"
+
+  "method" should "not have O(1) complexity" in new IntPoolBuilder {
+    pool.add(1)
+    pool.resetGetCallsCounter()
+    pool.remove() should be (Some(1))
+    pool.getGetCallsCounter should be > 1
   }
 }
