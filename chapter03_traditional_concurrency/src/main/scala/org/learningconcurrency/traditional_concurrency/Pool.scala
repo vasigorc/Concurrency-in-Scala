@@ -16,9 +16,8 @@ class Pool[T] extends ArrayOfAtomicsWrapper[(List[T], Long)]{
   for (i <- buckets.indices) buckets(i) = new AtomicReference((Nil, 0L))
   private val nonEmptyIndices = ConcurrentHashMap.newKeySet[Int]
 
-  private def compactNonEmptyIndices(index: Int) = {
-    val bucket = get(index)
-    bucket._1 match {
+  private def compactNonEmptyIndices(index: Int, newList: List[T]) = {
+    newList match {
       case Nil => nonEmptyIndices.remove(index)
       case _ => nonEmptyIndices.add(index)
     }
@@ -35,7 +34,7 @@ class Pool[T] extends ArrayOfAtomicsWrapper[(List[T], Long)]{
       val nstamp = stamp + 1
       val nv = (nlst, nstamp)
       if (!bucket.compareAndSet(v, nv)) retry()
-      else compactNonEmptyIndices(i)
+      else compactNonEmptyIndices(i, nlst)
     }
 
     retry()
@@ -58,7 +57,7 @@ class Pool[T] extends ArrayOfAtomicsWrapper[(List[T], Long)]{
             case v@(lst, stamp) =>
               val nv = (lst.tail, stamp + 1)
               if (bucket.compareAndSet(v, nv)) {
-                compactNonEmptyIndices(i)
+                compactNonEmptyIndices(i, nv._1)
                 Some(lst.head)
               }
               else retry()
@@ -88,18 +87,17 @@ class Pool[T] extends ArrayOfAtomicsWrapper[(List[T], Long)]{
     if(nonEmptyIndices.isEmpty) None
     else {
       val index: Int = nonEmptyIndices.iterator().next()
-      val bucket = buckets(index)
+      val bucket = get(index)
 
       @tailrec def retry(): Option[T] = {
-        bucket.get._1 match {
+        bucket._1 match {
           case Nil => None
-          case head::tail => {
-            if(bucket.compareAndSet(bucket.get, (tail, bucket.get()._2))) {
-              compactNonEmptyIndices(index)
+          case head::tail =>
+            if(buckets(index).compareAndSet(bucket, (tail, bucket._2))) {
+              compactNonEmptyIndices(index, tail)
               Some(head)
             }
             else retry()
-          }
         }
       }
 
