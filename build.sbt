@@ -20,5 +20,10 @@ lazy val chapter03_traditional_concurrency = project.
     settings(Common.settings: _*).
     settings(libraryDependencies ++= Dependencies.commonDependencies ++ Dependencies.monixDependencies ++ Dependencies.simulacrum)
 
+lazy val chapter04_futures_and_promises = project.
+    dependsOn(chapter01_introduction % "compile->compile;test->test").
+    settings(Common.settings: _*).
+    settings(libraryDependencies ++= Dependencies.commonDependencies)
+
 lazy val root = (project in file(".")).
     aggregate(chapter01_introduction, chapter02_concurrency_on_jvm, chapter03_traditional_concurrency)
