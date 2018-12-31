@@ -34,10 +34,8 @@ object Ex01_FetchHtmlFromUrl extends App {
       TimeUnit.MILLISECONDS.sleep(50)
     }
     println()
-    future onComplete { z =>
-      print(z)
-      p success()
-    }
+    future.foreach(print(_))
+    p success()
     p.future
   }
 }
