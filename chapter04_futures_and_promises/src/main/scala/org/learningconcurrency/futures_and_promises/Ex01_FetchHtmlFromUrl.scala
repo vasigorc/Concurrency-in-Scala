@@ -8,6 +8,8 @@ import scala.io._
 import ExecutionContext.Implicits.global
 import org.learningconcurrency.validators.Validable._
 
+import scala.util.{Failure, Success}
+
 /**
   * Exercise 1 Implement a command-line program that asks the user to input
   * a URL of some website, and displays the HTML of that website. Between the
@@ -21,21 +23,28 @@ object Ex01_FetchHtmlFromUrl extends App {
 
   val url: URL = validateType[URL](StdIn.readLine("Please enter the URL of the document you wish to see:\n"))
 
-  timeout(2000) or printHtml(url)
+  private val maybeDocument: Future[Either[Throwable, String]] = timeout[String](2000) or getHtmlFuture(url)
 
-  private def printHtml(url: URL): Future[Unit] = {
-    val p = Promise[Unit]
+  maybeDocument foreach  {
+    case Right(doc) => println(s"\n$doc")
+    case Left(e) =>  e.printStackTrace()
+  }
+
+  while(!maybeDocument.isCompleted) {
+    print(".")
+    TimeUnit.MILLISECONDS.sleep(50)
+  }
+
+  private def getHtmlFuture(url: URL): Future[Either[Throwable, String]] = {
+    val p = Promise[Either[Throwable, String]]
     val future =
     Future {
         Source.fromURL(url).mkString
       }
-    while (!future.isCompleted) {
-      print(".")
-      TimeUnit.MILLISECONDS.sleep(50)
+    future onComplete {
+      case Success(doc) => p success Right(doc)
+      case Failure(_) => p failure _
     }
-    println()
-    future.foreach(print(_))
-    p success()
     p.future
   }
 }

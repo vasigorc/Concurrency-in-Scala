@@ -1,5 +1,6 @@
 package org.learningconcurrency
 
+import java.util.concurrent.TimeoutException
 import java.util.{Timer, TimerTask}
 
 import scala.concurrent.{Future, Promise}
@@ -10,11 +11,11 @@ package object futures_and_promises {
 
   private val timer = new Timer(true)
 
-  def timeout(t: Long): Future[Unit] = {
-    val p = Promise[Unit]
+  def timeout[T](t: Long): Future[Either[Throwable, T]] = {
+    val p = Promise[Either[TimeoutException, T]]
     timer.schedule(new TimerTask {
       override def run(): Unit = {
-        p success()
+        p success Left(new TimeoutException())
         timer.cancel()
       }
     }, t)
