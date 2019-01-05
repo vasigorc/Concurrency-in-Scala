@@ -25,4 +25,9 @@ class IVarTest extends BaseSpec {
   }
 
   behavior of ":="
+
+  s"calling := with on $className with already set value" should "throw an exception" in new IntIvar {
+    ivar := 7
+    an [Exception] should be thrownBy (ivar := 10)
+  }
 }
