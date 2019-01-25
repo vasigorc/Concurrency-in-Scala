@@ -55,9 +55,7 @@ package object futures_and_promises {
     def exists(p: T => Boolean): Future[Boolean] = {
       self transformWith {
         case Success(s) => Future { p(s) }
-        case Failure(_) => Future {
-          false
-        }
+        case Failure(_) => Future { false }
       }
     }
   }
