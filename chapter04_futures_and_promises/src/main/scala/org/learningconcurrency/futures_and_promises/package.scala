@@ -43,5 +43,24 @@ package object futures_and_promises {
       }
       p future
     }
+
+    /**
+      * Exercise 3 Expand the Future[T] type with the exists method, which takes a predicate
+      * and returns a Future[Boolean]
+      * @param p predicate function
+      * @return the resulting future is completed with true if and only if the original future is completed and the
+      * predicate returns true, and false otherwise. You can use future combinations, but you are not allowed
+      * to create any Promise objects in the implementation.
+      */
+    def exists(p: T => Boolean): Future[Boolean] = {
+      self transformWith {
+        case Success(s) => Future {
+          if (p(s)) true else false
+        }
+        case Failure(_) => Future {
+          false
+        }
+      }
+    }
   }
 }
