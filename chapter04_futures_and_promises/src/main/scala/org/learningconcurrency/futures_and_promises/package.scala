@@ -60,6 +60,9 @@ package object futures_and_promises {
       }
     }
 
+    /*
+      Exercise 4 Repeat Exercise 3, but use Promise objects instead of future combinations
+     */
     def existsWithPromise(p: T => Boolean): Future[Boolean] = {
       val promisedBoolean = Promise[Boolean]
       self onComplete {
@@ -69,10 +72,11 @@ package object futures_and_promises {
       promisedBoolean future
     }
 
-    def existsAsync(p: T => Boolean): Future[Boolean] = {
-      async {
-        ???
-      }
-    }
+    /*
+      Exercise 5 Repeat Exercise 3, but use Scala Async framework
+     */
+    def existsAsync(p: T => Boolean): Future[Boolean] = async {
+      p(await(self))
+    }.recoverWith {case _ => Future {false} }
   }
 }
