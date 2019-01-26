@@ -25,8 +25,8 @@ package object futures_and_promises {
   implicit class FutureOps[T] (val self: Future[T]) {
     def or(that: Future[T]): Future[T] = {
       val p = Promise[T]
-      self onComplete { case x => p tryComplete x}
-      that onComplete { case y => p tryComplete y}
+      self onComplete (x => p tryComplete x)
+      that onComplete (y => p tryComplete y)
       p.future
     }
 
@@ -38,7 +38,7 @@ package object futures_and_promises {
     def and[R](that: Future[R]): Future[R] = {
       val p = Promise[R]
       self andThen {
-        case Success(_) => that onComplete { case z => p tryComplete z }
+        case Success(_) => that onComplete (z => p tryComplete z)
         case Failure(ex) => p failure ex
       }
       p future
@@ -57,6 +57,15 @@ package object futures_and_promises {
         case Success(s) => Future { p(s) }
         case Failure(_) => Future { false }
       }
+    }
+
+    def existsWithPromise(p: T => Boolean): Future[Boolean] = {
+      val promisedBoolean = Promise[Boolean]
+      self onComplete {
+        case Success(s) => promisedBoolean success p(s)
+        case Failure(_) => promisedBoolean success false
+      }
+      promisedBoolean future
     }
   }
 }
