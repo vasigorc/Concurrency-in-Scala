@@ -6,6 +6,7 @@ import java.util.{Timer, TimerTask}
 import scala.concurrent.{Future, Promise}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.{Failure, Success}
+import scala.async.Async.{async, await}
 
 package object futures_and_promises {
 
@@ -66,6 +67,12 @@ package object futures_and_promises {
         case Failure(_) => promisedBoolean success false
       }
       promisedBoolean future
+    }
+
+    def existsAsync(p: T => Boolean): Future[Boolean] = {
+      async {
+        ???
+      }
     }
   }
 }
