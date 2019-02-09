@@ -78,5 +78,18 @@ package object futures_and_promises {
     def existsAsync(p: T => Boolean): Future[Boolean] = async {
       p(await(self))
     }.recoverWith {case _ => Future {false} }
+
+  }
+
+  /*
+      Exercise 6 Implement the spawn method, which takes a command line String,
+      asynchronously executes it as a child process, and returns a future with
+      the exit code of the child process. Make sure your implementation
+      does not cause thread starvation
+     */
+  def spawn(command: String): Future[Int] = {
+    import scala.sys.process._
+
+    async(command.!)
   }
 }
