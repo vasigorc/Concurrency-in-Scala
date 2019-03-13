@@ -26,14 +26,14 @@ object Dependencies {
     "io.monix" %% "monix-cats" % monixVersion
   )
 
-  val simulacrumVersion = "0.13.0"
-
-  val simulacrum: Seq[ModuleID] = Seq(
-    "com.github.mpilquist" %% "simulacrum" % simulacrumVersion
-  )
-
   //lowest stable version for scala 2.12
   val scalaAsyncVersion = "0.9.6"
 
   val scalaAsync = "org.scala-lang.modules" %% "scala-async" % scalaAsyncVersion
+
+  //2.12 version of rxScala
+  val rxScalaVersion = "0.26.5"
+
+  val rxScala = "io.reactivex" %% "rxscala" % rxScalaVersion
+
 }
