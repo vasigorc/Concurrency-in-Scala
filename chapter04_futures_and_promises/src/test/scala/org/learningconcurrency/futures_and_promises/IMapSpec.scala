@@ -2,9 +2,13 @@ package org.learningconcurrency.futures_and_promises
 
 import org.scalatest.{AsyncFlatSpec, Matchers}
 
+import scala.concurrent.Future
+
 class IMapSpec extends AsyncFlatSpec with Matchers {
 
-  def fixture = new {
+  def fixture: Object {
+    val instance: IMap[Int, String]
+  } = new {
     val instance = new IMap[Int, String]
   }
 
@@ -14,5 +18,21 @@ class IMapSpec extends AsyncFlatSpec with Matchers {
     val iMap = fixture.instance
     iMap update(7, "Seven")
     an [IllegalArgumentException] should be thrownBy iMap.update(7, "Sieben")
+  }
+
+  behavior of "apply"
+
+  it should "return an uncompleted Future for an empty Map" in {
+    fixture.instance.apply(7).value shouldEqual None
+  }
+
+  it should "return a Future for a key that will only complete when that key is added" in {
+    val iMap = fixture.instance
+    val eventualSeven: Future[String] = iMap.apply(7)
+
+    assert(!eventualSeven.isCompleted)
+
+    iMap.update(7, "Seven")
+    eventualSeven.map(value => assert(value == "Seven"))
   }
 }
