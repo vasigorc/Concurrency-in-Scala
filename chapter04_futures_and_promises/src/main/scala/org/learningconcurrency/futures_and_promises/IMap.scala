@@ -53,7 +53,7 @@ class IMap[K, V] extends IMapContract[K, V] {
   }
 }
 
-private trait IMapContract[K, V] {
+trait IMapContract[K, V] {
   def update(k: K, v: V): Unit
   def apply(k: K): Future[V]
 }
