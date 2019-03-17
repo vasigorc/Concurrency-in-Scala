@@ -34,6 +34,7 @@ class IMapSpec extends AsyncFlatSpec with Matchers {
     eventualSeven.isCompleted shouldEqual false
 
     iMap.update(7, "Sieben")
+    eventualSeven.isCompleted shouldEqual true
     eventualSeven.map(value => value shouldEqual "Sieben")
   }
 }
