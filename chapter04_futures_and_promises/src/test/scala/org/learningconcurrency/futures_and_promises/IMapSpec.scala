@@ -31,7 +31,7 @@ class IMapSpec extends AsyncFlatSpec with Matchers {
     val iMap = fixture.instance
     val eventualSeven: Future[String] = iMap.apply(7)
 
-    assert(!eventualSeven.isCompleted)
+    eventualSeven.isCompleted shouldEqual false
 
     iMap.update(7, "Sieben")
     eventualSeven.map(value => value shouldEqual "Sieben")
