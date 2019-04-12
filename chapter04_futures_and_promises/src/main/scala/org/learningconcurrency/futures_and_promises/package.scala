@@ -7,6 +7,7 @@ import scala.concurrent.{Future, Promise}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.{Failure, Success}
 import scala.async.Async.{async, await}
+import scala.concurrent.impl.Promise
 
 package object futures_and_promises {
 
@@ -81,6 +82,25 @@ package object futures_and_promises {
 
   }
 
+  implicit class PromiseOps[T] (val self: Promise[T]) {
+   
+    /**
+     * Exercise 8. Extend the type Promise[T] with the compose method, which takes a
+     * function of the type S => T, and returns a Promise[S] object.
+     * Whenever the resulting promise is completed with some value of x
+     * of the type (or failed), the original promise must be completed
+     * with the value f(x) asynchrounously (or failed), unless the original promise
+     * is already completed
+     */
+    def compose[S](f: S => T): Promise[S] = {
+      val p = Promise[S]()
+      p.future onComplete { 
+        case Success(x) => if(!self.isCompleted) self.success(f(x))
+        case Failure(exc) => if(!self.isCompleted) self.failure(exc)
+      }
+      p
+    }
+  }
   /*
       Exercise 6 Implement the spawn method, which takes a command line String,
       asynchronously executes it as a child process, and returns a future with
