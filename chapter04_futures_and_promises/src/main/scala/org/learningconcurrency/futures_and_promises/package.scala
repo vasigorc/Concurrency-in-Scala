@@ -1,12 +1,12 @@
 package org.learningconcurrency
 
 import java.util.concurrent.TimeoutException
-import java.util.{Timer, TimerTask}
+import java.util.{ Timer, TimerTask }
 
-import scala.concurrent.{Future, Promise}
+import scala.concurrent.{ Future, Promise }
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.util.{Failure, Success}
-import scala.async.Async.{async, await}
+import scala.util.{ Failure, Success }
+import scala.async.Async.{ async, await }
 import scala.concurrent.impl.Promise
 
 package object futures_and_promises {
@@ -24,7 +24,7 @@ package object futures_and_promises {
     p.future
   }
 
-  implicit class FutureOps[T] (val self: Future[T]) {
+  implicit class FutureOps[T](val self: Future[T]) {
     def or(that: Future[T]): Future[T] = {
       val p = Promise[T]
       self onComplete (x => p tryComplete x)
@@ -33,10 +33,10 @@ package object futures_and_promises {
     }
 
     /**
-      * Success value of the initial future is discarded
-      * @param that - the other future
-      * @return success value of the other future or failure (either first or second)
-      */
+     * Success value of the initial future is discarded
+     * @param that - the other future
+     * @return success value of the other future or failure (either first or second)
+     */
     def and[R](that: Future[R]): Future[R] = {
       val p = Promise[R]
       self andThen {
@@ -47,13 +47,13 @@ package object futures_and_promises {
     }
 
     /**
-      * Exercise 3 Expand the Future[T] type with the exists method, which takes a predicate
-      * and returns a Future[Boolean]
-      * @param p predicate function
-      * @return the resulting future is completed with true if and only if the original future is completed and the
-      * predicate returns true, and false otherwise. You can use future combinations, but you are not allowed
-      * to create any Promise objects in the implementation.
-      */
+     * Exercise 3 Expand the Future[T] type with the exists method, which takes a predicate
+     * and returns a Future[Boolean]
+     * @param p predicate function
+     * @return the resulting future is completed with true if and only if the original future is completed and the
+     * predicate returns true, and false otherwise. You can use future combinations, but you are not allowed
+     * to create any Promise objects in the implementation.
+     */
     def exists(p: T => Boolean): Future[Boolean] = {
       self transformWith {
         case Success(s) => Future { p(s) }
@@ -78,12 +78,12 @@ package object futures_and_promises {
      */
     def existsAsync(p: T => Boolean): Future[Boolean] = async {
       p(await(self))
-    }.recoverWith {case _ => Future {false} }
+    }.recoverWith { case _ => Future { false } }
 
   }
 
-  implicit class PromiseOps[T] (val self: Promise[T]) {
-   
+  implicit class PromiseOps[T](val self: Promise[T]) {
+
     /**
      * Exercise 8. Extend the type Promise[T] with the compose method, which takes a
      * function of the type S => T, and returns a Promise[S] object.
@@ -94,9 +94,9 @@ package object futures_and_promises {
      */
     def compose[S](f: S => T): Promise[S] = {
       val p = Promise[S]()
-      p.future onComplete { 
-        case Success(x) => if(!self.isCompleted) self.success(f(x))
-        case Failure(exc) => if(!self.isCompleted) self.failure(exc)
+      p.future onComplete {
+        case Success(x) => if (!self.isCompleted) self.success(f(x))
+        case Failure(exc) => if (!self.isCompleted) self.failure(exc)
       }
       p
     }
@@ -111,5 +111,17 @@ package object futures_and_promises {
     import scala.sys.process._
 
     async(command.!)
+  }
+
+  /**
+   * Exercise 9. Implement the [[scatterGather]] method, which given a sequence of tasks,
+   * runs those tasks as parallel asynchronous computations, then combines the results,
+   * and returns a future that contains the sequence of results from different tasks.
+   * @param tasks - passed-in Sequence of callables
+   * @return future of values returned from tasks
+   */
+  def scatterGather[T](tasks: Seq[() => T]): Future[Seq[T]] = {
+    val seqOfFutures: Seq[Future[T]] = tasks map (call => async(call.apply()))
+    Future.sequence(seqOfFutures)
   }
 }
