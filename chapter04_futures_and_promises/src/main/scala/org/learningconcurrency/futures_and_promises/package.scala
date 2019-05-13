@@ -7,7 +7,6 @@ import scala.concurrent.{ Future, Promise }
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.{ Failure, Success }
 import scala.async.Async.{ async, await }
-import scala.concurrent.impl.Promise
 
 package object futures_and_promises {
 
