@@ -12,3 +12,11 @@ Learning-Concurrent-Programming-In-Scala-Second-Edition
 .travis.yml
 .gitignore
 .directory
+
+# ignore eclipse files
+*.cache-main
+*.cache-tests
+chapter01_introduction/bin/*
+*.classpath
+*.project
+**/.settings

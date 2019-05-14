@@ -18,7 +18,12 @@ lazy val chapter02_concurrency_on_jvm = project.
 lazy val chapter03_traditional_concurrency = project.
     dependsOn(chapter01_introduction % "compile->compile;test->test").
     settings(Common.settings: _*).
-    settings(libraryDependencies ++= Dependencies.commonDependencies ++ Dependencies.monixDependencies ++ Dependencies.simulacrum)
+    settings(libraryDependencies ++= Dependencies.commonDependencies ++ Dependencies.monixDependencies)
+
+lazy val chapter04_futures_and_promises = project.
+    dependsOn(chapter01_introduction % "compile->compile;test->test").
+    settings(Common.settings: _*).
+    settings(libraryDependencies ++= Dependencies.commonDependencies :+ Dependencies.scalaAsync)
 
 lazy val root = (project in file(".")).
     aggregate(chapter01_introduction, chapter02_concurrency_on_jvm, chapter03_traditional_concurrency)
