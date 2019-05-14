@@ -6,8 +6,6 @@ import scala.concurrent.Future
 
 class ScatterGatherSpec extends AsyncFlatSpec with Matchers {
 
-  import org.learningconcurrency.futures_and_promises._
-
   behavior of "scatterGather"
 
   it should "return a Future of a Seq of parallel processed values " +

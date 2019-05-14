@@ -7,8 +7,6 @@ import scala.concurrent.Future
 
 class PromiseOpsSpec extends AsyncFreeSpec with Matchers {
 
-  import org.learningconcurrency.futures_and_promises._
-
   "When calling compose with a function f as param on an original Promise" - {
     "and the returned Promise is completed" - {
       "then the original Promise should be completed with function f applied " +
