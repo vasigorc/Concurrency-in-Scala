@@ -28,7 +28,7 @@ lazy val chapter04_futures_and_promises = project.
 lazy val chapter05_data_parallel_collections = project
   .dependsOn(chapter01_introduction % "compile->compile;test->test")
   .settings(Common.settings: _*)
-  .settings(libraryDependencies ++= Dependencies.commonDependencies)
+  .settings(libraryDependencies ++= Dependencies.commonDependencies :+ Dependencies.scalaMeter)
 
 lazy val root = (project in file(".")).
   aggregate(chapter01_introduction, chapter02_concurrency_on_jvm, chapter03_traditional_concurrency)
