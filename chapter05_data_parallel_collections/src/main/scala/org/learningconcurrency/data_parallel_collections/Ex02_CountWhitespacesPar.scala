@@ -2,6 +2,7 @@ package org.learningconcurrency.data_parallel_collections
 
 import org.apache.commons.lang3.RandomStringUtils
 
+import scala.language.postfixOps
 import scala.util.Random
 
 /**
@@ -49,7 +50,7 @@ object ProbabilitiesSequenceGenerator {
   def generateEvenProbabilities(n: Int): Seq[BigDecimal] = {
     require(n > 0, "# of requested probabilities must be greater then zero ")
 
-    val stepIncrement = BigDecimal(n / 1D)
-    1 to n map (step => BigDecimal(approximateProbability(step * stepIncrement.doubleValue())))
+    val stepIncrement = BigDecimal(1D / n)
+    (1 to n map (step => BigDecimal(approximateProbability(step * stepIncrement.doubleValue()))) toList) sorted
   }
 }
