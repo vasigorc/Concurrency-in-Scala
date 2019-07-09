@@ -2,6 +2,7 @@ package org.learningconcurrency.data_parallel_collections
 
 import org.apache.commons.lang3.RandomStringUtils
 
+import scala.annotation.tailrec
 import scala.language.postfixOps
 import scala.util.Random
 
@@ -19,6 +20,7 @@ object Ex02_CountWhitespacesPar extends App with RandomWhiteSpacedString {
 
   private def calculateGraph(probabilities: Seq[Double], pToString: Double => String): Vector[(Double, Double)] = {
 
+    @tailrec
     def helper(accumulator: Vector[(Double, Double)], remainingProps: Seq[Double]): Vector[(Double, Double)] = {
       if (remainingProps.isEmpty) return accumulator
       val head = remainingProps.head
