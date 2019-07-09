@@ -11,10 +11,31 @@ import scala.util.Random
   * determined by a p parameter. Use the parallel foreach method. Plot a graph
   * that correlates the running time of this operation with the p parameter
   */
-object Ex02_CountWhitespacesPar extends RandomWhiteSpacedString {
+object Ex02_CountWhitespacesPar extends App with RandomWhiteSpacedString {
 
+  import ProbabilitiesSequenceGenerator._
 
   private val random200: Double => String = randomWhitespacedString(randomStringOf(200))
+
+  private def calculateGraph(probabilities: Seq[Double], pToString: Double => String): Vector[(Double, Double)] = {
+
+    def helper(accumulator: Vector[(Double, Double)], remainingProps: Seq[Double]): Vector[(Double, Double)] = {
+      if (remainingProps.isEmpty) return accumulator
+      val head = remainingProps.head
+      val stringWithWhitespaces = pToString(head)
+      //FIXME should calculate time spent
+      val actualNrWhitespaces = getTimedResult(stringWithWhitespaces.par.count(_ == ' ')).time
+      helper(accumulator :+ (head, actualNrWhitespaces), remainingProps.tail)
+    }
+
+    helper(Vector[(Double, Double)](), probabilities)
+  }
+
+  val probabilities: Seq[Double] = generateEvenProbabilities(10)
+
+  calculateGraph(probabilities, random200) foreach {
+    case (p, runningTime) => println(s"For p $p the time is $runningTime")
+  }
 }
 
 trait RandomWhiteSpacedString {
@@ -47,10 +68,10 @@ object ProbabilitiesSequenceGenerator {
   }
 
   //produces ~ evenly distributed sequence of probabilities like 0.18, 0.38, 0.58, 0.78, 0.98
-  def generateEvenProbabilities(n: Int): Seq[BigDecimal] = {
+  def generateEvenProbabilities(n: Int): Seq[Double] = {
     require(n > 0, "# of requested probabilities must be greater then zero ")
 
-    val stepIncrement = BigDecimal(1D / n)
-    (1 to n map (step => BigDecimal(approximateProbability(step * stepIncrement.doubleValue()))) toList) sorted
+    val stepIncrement = 1D / n
+    (1 to n map (step => (approximateProbability(step * stepIncrement.doubleValue()))) toList) sorted
   }
 }
