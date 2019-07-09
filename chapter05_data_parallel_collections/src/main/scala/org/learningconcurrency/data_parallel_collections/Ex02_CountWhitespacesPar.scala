@@ -23,8 +23,8 @@ object Ex02_CountWhitespacesPar extends App with RandomWhiteSpacedString {
       if (remainingProps.isEmpty) return accumulator
       val head = remainingProps.head
       val stringWithWhitespaces = pToString(head)
-      //FIXME should calculate time spent
       val actualNrWhitespaces = getTimedResult(stringWithWhitespaces.par.count(_ == ' ')).time
+      //append new (p, runningTime) to the end of the vector
       helper(accumulator :+ (head, actualNrWhitespaces), remainingProps.tail)
     }
 
