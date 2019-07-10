@@ -52,19 +52,18 @@ trait RandomWhiteSpacedString {
       case _ => c
     }
 
-    targetString map (randomWhiteSpace(_))
+    targetString map randomWhiteSpace
   }
 }
 
 object ProbabilitiesSequenceGenerator {
 
-  private lazy val INACCURACY_FACTOR = 0.2
-
   //instead of 1 (for example) we want a random value between 0.8 and 1
-  private def approximateProbability(roughProbability: Double): Double = {
+  private def approximateProbability(stepIncrement: Double, roughProbability: Double): Double = {
     require(roughProbability <= 1, "Probability can not be greater then 1")
 
-    val minRange = if (roughProbability < INACCURACY_FACTOR) 0 else roughProbability - INACCURACY_FACTOR
+    val inaccuracyFactor = stepIncrement / 2
+    val minRange = if (roughProbability < inaccuracyFactor) 0 else roughProbability - inaccuracyFactor
 
     minRange + (roughProbability - minRange) * Random.nextDouble()
   }
@@ -74,6 +73,6 @@ object ProbabilitiesSequenceGenerator {
     require(n > 0, "# of requested probabilities must be greater then zero ")
 
     val stepIncrement = 1D / n
-    (1 to n map (step => (approximateProbability(step * stepIncrement.doubleValue()))) toList) sorted
+    (1 to n map (step => approximateProbability(stepIncrement, step * stepIncrement)) toList) sorted
   }
 }
