@@ -12,13 +12,19 @@ import scala.util.Random
   * determined by a p parameter. Use the parallel foreach method. Plot a graph
   * that correlates the running time of this operation with the p parameter
   */
-object Ex02_CountWhitespacesPar extends App with RandomWhiteSpacedString {
+trait Ex02_CountWhitespacesPar extends RandomWhiteSpacedString {
 
   import ProbabilitiesSequenceGenerator._
+  val stringLength: Int = 200
+  val nrProbabilities: Int = 10
 
-  private val random200: Double => String = randomWhitespacedString(randomStringOf(200))
+  /**
+    * function that takes a double and uses it as a probability to replace each character
+    * in a string of length [[stringLength]] with a white space
+    */
+  protected val stringToStringWithWhiteSpaces: Double => String = randomWhitespacedString(randomStringOf(stringLength))
 
-  private def calculateGraph(probabilities: Seq[Double], pToString: Double => String): Vector[(Double, Double)] = {
+  protected def calculateGraph(probabilities: Seq[Double], pToString: Double => String): Vector[(Double, Double)] = {
 
     @tailrec
     def helper(accumulator: Vector[(Double, Double)], remainingProps: Seq[Double]): Vector[(Double, Double)] = {
@@ -33,17 +39,18 @@ object Ex02_CountWhitespacesPar extends App with RandomWhiteSpacedString {
     helper(Vector[(Double, Double)](), probabilities)
   }
 
-  val probabilities: Seq[Double] = generateEvenProbabilities(10)
-
-  calculateGraph(probabilities, random200) foreach {
-    case (p, runningTime) => println(s"For p $p the time is $runningTime")
-  }
+  val probabilities: Seq[Double] = generateEvenProbabilities(nrProbabilities)
 }
 
 trait RandomWhiteSpacedString {
 
   protected def randomStringOf(length: Int): String = RandomStringUtils.randomAlphabetic(length)
 
+  /**
+    * Replace each character in the passed-in String with a white space with probability of p
+    * @param targetString - passed-in string
+    * @return result of the above mentioned function
+    */
   protected def randomWhitespacedString(targetString: String): Double => String = (p: Double) => {
     require(p > 0 && p < 1)
 
