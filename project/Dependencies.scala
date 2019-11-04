@@ -36,4 +36,7 @@ object Dependencies {
 
   val rxScala = "io.reactivex" %% "rxscala" % rxScalaVersion
 
+  val scalaMeter = "com.storm-enroute" %% "scalameter" % "0.9"
+  
+  val scalaFx = "org.scalafx" %% "scalafx" % "11-R16"
 }
