@@ -1,8 +1,8 @@
-name := "learning concurrent programming in scala"
-organization in ThisBuild := "ca.vgorcinschi"
-scalaVersion in ThisBuild := "2.12.6"
+ThisBuild / name := "learning concurrent programming in scala"
+ThisBuild / organization in ThisBuild := "ca.vgorcinschi"
+ThisBuild / scalaVersion := "2.12.10"
 
-version := "0.0.1"
+ThisBuild / version := "0.0.1"
 
 resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
 

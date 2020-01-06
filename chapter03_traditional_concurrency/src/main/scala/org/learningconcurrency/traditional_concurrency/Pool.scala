@@ -14,30 +14,21 @@ class Pool[T] extends ArrayOfAtomicsWrapper[(List[T], Long)]{
   val parallelism: Int = Runtime.getRuntime.availableProcessors * 32
   val buckets = new Array[AtomicReference[TimeStampedList]](parallelism)
   for (i <- buckets.indices) buckets(i) = new AtomicReference((Nil, 0L))
-  private val nonEmptyIndices = ConcurrentHashMap.newKeySet[Int]
+  private val filledIndices = ConcurrentHashMap.newKeySet[Int]
 
   private def compactNonEmptyIndices(index: Int, newList: List[T]) = {
     newList match {
-      case Nil => nonEmptyIndices.remove(index)
-      case _ => nonEmptyIndices.add(index)
+      case Nil => filledIndices.remove(index)
+      case _ => filledIndices.add(index)
     }
   }
 
-  def add(x: T): Unit = {
-    val i = (Thread.currentThread.getId ^ x.## % buckets.length).toInt
+  def add(elem: T): Unit = {
+    val i = (Thread.currentThread.getId ^ elem.## % buckets.length).toInt
 
-    @tailrec def retry(): Unit = {
       val bucket = buckets(i)
-      val v = bucket.get
-      val (lst, stamp) = v
-      val nlst = x :: lst
-      val nstamp = stamp + 1
-      val nv = (nlst, nstamp)
-      if (!bucket.compareAndSet(v, nv)) retry()
-      else compactNonEmptyIndices(i, nlst)
-    }
-
-    retry()
+      val (newLst, _) = bucket.updateAndGet { case (lst, stmp) => (elem::lst, stmp + 1) }
+      compactNonEmptyIndices(i, newLst)
   }
 
   def remove(): Option[T] = {
@@ -84,9 +75,9 @@ class Pool[T] extends ArrayOfAtomicsWrapper[(List[T], Long)]{
     operations run in O(1) expected time, both in terms of the number of stored elements and the number of processors.
    */
   def removeO1(): Option[T] = {
-    if(nonEmptyIndices.isEmpty) None
+    if(filledIndices.isEmpty) None
     else {
-      val index: Int = nonEmptyIndices.iterator().next()
+      val index: Int = filledIndices.iterator().next()
       val bucket = get(index)
 
       @tailrec def retry(): Option[T] = {

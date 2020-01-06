@@ -20,3 +20,8 @@ chapter01_introduction/bin/*
 *.classpath
 *.project
 **/.settings
+
+# ignore bloop and metals files
+.bloop
+.metals
+project/.bloop

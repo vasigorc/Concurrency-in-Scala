@@ -13,7 +13,7 @@ class PoolSpec extends BaseSpec {
 
   behavior of "foreach"
 
-  "method" should "help to correctly count sum of ints pushed to the pool" in new IntPoolBuilder {
+  it should "help to correctly count sum of ints pushed to the pool" in new IntPoolBuilder {
 
     val inserters: Seq[Thread] = for (_ <- 0 until p) yield thread {
       for (_ <- 0 until num) pool add 1
