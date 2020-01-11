@@ -33,7 +33,7 @@ trait Ex02_CountWhitespacesPar extends RandomWhiteSpacedString {
       val stringWithWhitespaces = pToString(head)
       val actualNrWhitespaces = getTimedResult(stringWithWhitespaces.par.count(_ == ' ')).time
       //append new (p, runningTime) to the end of the vector
-      helper(accumulator :+ (head, actualNrWhitespaces), remainingProps.tail)
+      helper(accumulator :+ ((head, actualNrWhitespaces)), remainingProps.tail)
     }
 
     helper(Vector[(Double, Double)](), probabilities)
