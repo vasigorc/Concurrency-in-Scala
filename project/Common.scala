@@ -6,7 +6,7 @@ object Common {
 
   val settings: Seq[Def.Setting[_]] = Seq(
     version := appVersion,
-    scalaVersion := "2.12.6",
+    scalaVersion := "2.12.10",
     javacOptions ++= Seq("-source", "1.8", "-target", "1.8"), //, "-Xmx2G"),
     scalacOptions ++= Seq("-deprecation", "-unchecked"),
     resolvers += Opts.resolver.mavenLocalFile,

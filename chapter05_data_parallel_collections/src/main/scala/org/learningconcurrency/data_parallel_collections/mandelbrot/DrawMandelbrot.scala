@@ -1,7 +1,7 @@
 package org.learningconcurrency.data_parallel_collections.mandelbrot
 
 import scalafx.application.JFXApp.PrimaryStage
-import scalafx.application.{JFXApp, Platform}
+import scalafx.application.JFXApp
 import scalafx.scene.Scene
 import scalafx.scene.image.{Image, ImageView, WritableImage}
 import scalafx.scene.layout.StackPane
