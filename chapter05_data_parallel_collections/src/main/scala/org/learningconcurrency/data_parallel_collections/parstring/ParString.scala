@@ -1,5 +1,7 @@
 package org.learningconcurrency.data_parallel_collections.parstring
 
+import org.apache.commons.lang3.StringUtils
+
 import scala.collection.parallel
 import scala.collection.parallel.immutable.ParSeq
 import scala.collection.parallel.{Combiner, SeqSplitter}
@@ -27,4 +29,6 @@ class ParString(val str: String, parStringCombiner: ParStringCombiner = new ParS
   def seq = new collection.immutable.WrappedString(str)
 
   override def newCombiner: Combiner[Char, ParSeq[Char]] = parStringCombiner
+
+  override def toString(): String = StringUtils.abbreviate(str, 20)
 }

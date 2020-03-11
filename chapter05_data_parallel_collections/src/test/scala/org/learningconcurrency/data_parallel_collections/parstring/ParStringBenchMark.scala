@@ -24,15 +24,18 @@ object ParStringBenchMark extends org.scalameter.Bench[Double] with Serializable
   def persistor: Persistor = Persistor.None
 
   // benchmarks
-  val txt: String = ('a' until 'z').flatMap(c => List.fill(100)(() => c)).mkString
+  val txt: String = "A custom text" * 25000
   val basicParString = new ParString(txt)
   val parStringWithParallelCombiner = new ParString(txt, new ParStringCombiner(ParStringCombiner.parResultImpl))
 
-  private val parStrings: Gen[ParString] = Gen.enumeration("parStringImpls")(basicParString, parStringWithParallelCombiner)
   // tests
   performance of classOf[ParString].getSimpleName in {
     measure method "map" in {
-      using(parStrings) in {
+      using(Gen.single("basicParString")(basicParString)) in {
+        impl => impl.map(_ toUpper)
+      }
+
+      using(Gen.single("ex6")(parStringWithParallelCombiner)) in {
         impl => impl.map(_ toUpper)
       }
     }
