@@ -17,9 +17,9 @@ object Common {
       "Local Maven Repository" at "file://"+Path.userHome.absolutePath+"/.m2/repository",
       "Apache Staging" at "https://repository.apache.org/content/repositories/staging/",
       Classpaths.typesafeReleases,
-      "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/",
+      "Typesafe repository" at "https://repo.typesafe.com/typesafe/releases/",
       "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
-      "Java.net Maven2 Repository" at "http://download.java.net/maven/2/",
+      "Java.net Maven2 Repository" at "https://download.java.net/maven/2/",
       Classpaths.sbtPluginReleases,
       "Eclipse repositories" at "https://repo.eclipse.org/service/local/repositories/egit-releases/content/",
       "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots")

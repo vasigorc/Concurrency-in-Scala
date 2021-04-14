@@ -4,7 +4,7 @@ ThisBuild / scalaVersion := "2.12.10"
 
 ThisBuild / version := "0.0.1"
 
-resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
+resolvers += "scalaz-bintray" at "https://dl.bintray.com/scalaz/releases"
 
 lazy val chapter01_introduction = project.
   settings(Common.settings: _*).
@@ -31,4 +31,8 @@ lazy val chapter05_data_parallel_collections = project
   .settings(libraryDependencies ++= Dependencies.commonDependencies :+ Dependencies.scalaMeter)
 
 lazy val root = (project in file(".")).
-  aggregate(chapter01_introduction, chapter02_concurrency_on_jvm, chapter03_traditional_concurrency)
+  aggregate(chapter01_introduction,
+    chapter02_concurrency_on_jvm,
+    chapter03_traditional_concurrency,
+    chapter04_futures_and_promises,
+    chapter05_data_parallel_collections)
