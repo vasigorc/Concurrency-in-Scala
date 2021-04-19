@@ -1,3 +1,5 @@
+import Dependencies.{scalaFx, scalazCore}
+
 name := "chapter05_data_parallel_collections"
 
 // Add OS specific JavaFX dependencies
@@ -13,7 +15,7 @@ resolvers += Resolver.sonatypeRepo("snapshots")
 
 scalacOptions ++= Seq("-unchecked", "-deprecation", "-Xlint")
 
-libraryDependencies += Dependencies.scalaFx
+libraryDependencies ++= Seq(scalaFx, scalazCore)
 
 // Add ScalaMeter to the testing Frameworks
 testFrameworks += new TestFramework("org.scalameter.ScalaMeterFramework")
