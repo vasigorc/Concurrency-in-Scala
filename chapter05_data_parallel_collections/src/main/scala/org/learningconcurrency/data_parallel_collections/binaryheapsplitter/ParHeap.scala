@@ -62,3 +62,11 @@ class ParHeap[A](private val heap: Heap[A]) extends ParSeq[A] {
       new ParHeapSplitter(elements, i, limit)
   }
 }
+
+object ParHeap {
+  def apply[A](heap: Heap[A]): ParHeap[A] = new ParHeap[A](heap)
+
+  implicit class ScalazHeapOps[A](val heap: Heap[A]) {
+    def par: ParHeap[A] = ParHeap(heap)
+  }
+}
