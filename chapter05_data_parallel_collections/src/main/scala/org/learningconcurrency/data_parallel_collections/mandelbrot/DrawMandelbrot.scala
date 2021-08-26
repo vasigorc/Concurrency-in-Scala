@@ -7,6 +7,8 @@ import scalafx.scene.image.{Image, ImageView, WritableImage}
 import scalafx.scene.layout.StackPane
 import scalafx.scene.paint.Color
 
+import scala.collection.parallel.CollectionConverters.ImmutableSeqIsParallelizable
+
 /**
  * Exercise 03. Implement parallel rendering of the Mandelbrot Set
  */

@@ -2,6 +2,7 @@ package org.learningconcurrency.futures_and_promises
 
 import scala.concurrent._
 import scala.concurrent.duration._
+import scala.language.postfixOps
 import scala.util.Try
 
 class IVar[T] {

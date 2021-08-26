@@ -1,9 +1,10 @@
 package org.learningconcurrency.traditional_concurrency
 
 import org.scalatest.concurrent.Conductors
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
-class TreiberStackSpec extends FlatSpec with Matchers with Conductors {
+class TreiberStackSpec extends AnyFlatSpec with Matchers with Conductors {
 
   "A Stack" should "pop values in last-in-first-out order" in {
     val stack = new TreiberStack[Int]

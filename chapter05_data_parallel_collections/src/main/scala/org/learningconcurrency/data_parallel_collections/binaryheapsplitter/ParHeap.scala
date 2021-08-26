@@ -1,34 +1,33 @@
 package org.learningconcurrency.data_parallel_collections.binaryheapsplitter
 
-import scalaz.Heap
+import org.learningconcurrency.data_parallel_collections.binaryheapsplitter.BinaryHeapSplitter._
 
 import java.util.concurrent.atomic.AtomicInteger
 import scala.collection.immutable
 import scala.collection.parallel.SeqSplitter
 import scala.collection.parallel.immutable.ParSeq
-import scala.reflect.ClassTag
 
-class ParHeap[A : ClassTag](private val heap: Heap[A]) extends ParSeq[A] {
+class ParHeap[+A : IsOrdered](private val heap: Heap[A]) extends ParSeq[A] {
   override def apply(i: Int): A = seq(i)
 
-  /** Transforming [[Stream]] to [[Array]] once to gain O(1) random
+  /** Transforming [[Stream]] to [[Vector]] once to gain O(1) random
     * access complexity in every downstream operation
     * @return
     */
   override def splitter: SeqSplitter[A] =
-    ParHeapSplitter(seq.toArray, 0, length)
+    new ParHeapSplitter(Vector.from(seq), 0, length)
 
   override def seq: immutable.Seq[A] = heap.toStream
 
   override def length: Int = seq.size
 
-  class ParHeapSplitter(elements: Array[A], i: Int, limit: Int)
+  class ParHeapSplitter(elements: Vector[A], i: Int, limit: Int)
       extends SeqSplitter[A] {
 
     private val currentIndex = new AtomicInteger(i)
 
     override def dup: SeqSplitter[A] =
-      ParHeapSplitter(elements, currentIndex.get, limit)
+      new ParHeapSplitter(elements, currentIndex.get, limit)
 
     override def split: Seq[SeqSplitter[A]] = {
       val nrElemsRemaining: Int = remaining
@@ -40,7 +39,7 @@ class ParHeap[A : ClassTag](private val heap: Heap[A]) extends ParSeq[A] {
     override def psplit(sizes: Int*): Seq[SeqSplitter[A]] = {
       val subSplitters = for (sz <- sizes) yield {
         val newLimit = math.min(currentIndex.get + sz, limit)
-        val ps       = ParHeapSplitter(elements, currentIndex.get, newLimit)
+        val ps       = new ParHeapSplitter(elements, currentIndex.get, newLimit)
         // Update currentIndex!
         currentIndex.set(newLimit)
         ps
@@ -48,26 +47,17 @@ class ParHeap[A : ClassTag](private val heap: Heap[A]) extends ParSeq[A] {
 
       if (currentIndex.get == limit) subSplitters
       else
-        subSplitters :+ ParHeapSplitter(elements, currentIndex.get, limit)
+        subSplitters :+ new ParHeapSplitter(elements, currentIndex.get, limit)
     }
 
-    override def remaining: Int = limit - currentIndex
+    override def remaining: Int = limit - currentIndex.get()
 
     override def hasNext: Boolean = currentIndex.get < limit
 
     override def next(): A = elements(currentIndex.getAndIncrement())
   }
-
-  object ParHeapSplitter {
-    def apply(elements: Array[A], i: Int, limit: Int) =
-      new ParHeapSplitter(elements, i, limit)
-  }
 }
 
 object ParHeap {
-  def apply[A : ClassTag](heap: Heap[A]): ParHeap[A] = new ParHeap[A](heap)
-
-  implicit class ScalazHeapOps[A : ClassTag](val heap: Heap[A]) {
-    def par: ParHeap[A] = ParHeap(heap)
-  }
+  def apply[A : IsOrdered](heap: Heap[A]): ParHeap[A] = new ParHeap[A](heap)
 }

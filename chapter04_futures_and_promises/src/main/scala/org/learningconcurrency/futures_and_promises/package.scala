@@ -1,12 +1,12 @@
 package org.learningconcurrency
 
 import java.util.concurrent.TimeoutException
-import java.util.{ Timer, TimerTask }
-
-import scala.concurrent.{ Future, Promise }
+import java.util.{Timer, TimerTask}
+import scala.concurrent.{Future, Promise}
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.util.{ Failure, Success }
-import scala.async.Async.{ async, await }
+import scala.util.{Failure, Success}
+import scala.async.Async.{async, await}
+import scala.language.postfixOps
 
 package object futures_and_promises {
 

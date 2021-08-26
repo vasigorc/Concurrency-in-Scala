@@ -2,12 +2,12 @@ package org.learningconcurrency.traditional_concurrency
 
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicReference
-
 import org.learningconcurrency.traditional_concurrency.aop.ArrayOfAtomicsWrapper
 
 import scala.annotation.tailrec
+import scala.reflect.ClassTag
 
-class Pool[T] extends ArrayOfAtomicsWrapper[(List[T], Long)]{
+class Pool[T : ClassTag] extends ArrayOfAtomicsWrapper[(List[T], Long)]{
 
   type TimeStampedList = (List[T], Long)
 
@@ -103,7 +103,7 @@ class Pool[T] extends ArrayOfAtomicsWrapper[(List[T], Long)]{
     elements in the pool. Then make another version of foreach that is both lock-free and linearizable.
    */
   def foreach[U](tlFunc: T => U): Unit = {
-    buckets.map(_ get()) flatMap (_._1) foreach tlFunc
+    buckets.map(_.get()) flatMap (_._1) foreach tlFunc
   }
 
   def get(index: Int): TimeStampedList = buckets(index).get()

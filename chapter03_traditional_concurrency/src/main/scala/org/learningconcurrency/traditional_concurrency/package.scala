@@ -35,7 +35,7 @@ package object traditional_concurrency {
 
     val in = new ObjectInputStream(new FileInputStream(tmp)) //write to the same file
     withRessources(in){_ =>
-      in readObject() match {
+      in.readObject() match {
         case e: Throwable => throw e
         case x => x.asInstanceOf[T]
       }

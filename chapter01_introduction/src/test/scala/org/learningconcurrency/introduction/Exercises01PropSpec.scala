@@ -3,10 +3,11 @@ package org.learningconcurrency.introduction
 import org.learningconcurrency.combinationsResult
 import org.scalacheck.Gen
 import org.scalacheck.Prop._
-import org.scalatest.prop._
-import org.scalatest.{Inside, Matchers, PropSpec}
+import org.scalatest.Inside
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.propspec.AnyPropSpec
 
-class Exercises01PropSpec extends PropSpec with Checkers with Matchers with Inside{
+class Exercises01PropSpec extends AnyPropSpec with Matchers with Inside {
 
   import org.learningconcurrency.introduction.Exercises01._
 

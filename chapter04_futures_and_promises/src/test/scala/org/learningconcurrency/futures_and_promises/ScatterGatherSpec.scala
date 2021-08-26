@@ -1,7 +1,8 @@
 package org.learningconcurrency.futures_and_promises
 
-import org.scalatest.Matchers
-import org.scalatest.AsyncFlatSpec
+import org.scalatest.flatspec.AsyncFlatSpec
+import org.scalatest.matchers.should.Matchers
+
 import scala.concurrent.Future
 
 class ScatterGatherSpec extends AsyncFlatSpec with Matchers {

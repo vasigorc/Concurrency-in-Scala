@@ -2,9 +2,11 @@ package org.learningconcurrency.data_parallel_collections.parstring
 
 import scala.collection.parallel.SeqSplitter
 
+
 /**
  * Is invalidated after calling the [[split]] or [[psplit()]] method,
  * so we are allowed to mutate its [[i]] field.
+ *
  * @param str
  * @param i
  * @param limit
