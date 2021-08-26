@@ -6,8 +6,9 @@ import java.util.concurrent.atomic.AtomicInteger
 import scala.collection.immutable
 import scala.collection.parallel.SeqSplitter
 import scala.collection.parallel.immutable.ParSeq
+import scala.reflect.ClassTag
 
-class ParHeap[A](private val heap: Heap[A]) extends ParSeq[A] {
+class ParHeap[A : ClassTag](private val heap: Heap[A]) extends ParSeq[A] {
   override def apply(i: Int): A = seq(i)
 
   /** Transforming [[Stream]] to [[Array]] once to gain O(1) random
@@ -64,9 +65,9 @@ class ParHeap[A](private val heap: Heap[A]) extends ParSeq[A] {
 }
 
 object ParHeap {
-  def apply[A](heap: Heap[A]): ParHeap[A] = new ParHeap[A](heap)
+  def apply[A : ClassTag](heap: Heap[A]): ParHeap[A] = new ParHeap[A](heap)
 
-  implicit class ScalazHeapOps[A](val heap: Heap[A]) {
+  implicit class ScalazHeapOps[A : ClassTag](val heap: Heap[A]) {
     def par: ParHeap[A] = ParHeap(heap)
   }
 }
