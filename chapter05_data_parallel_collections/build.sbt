@@ -1,3 +1,5 @@
+import Dependencies.{scalaFx, scalazCore, cats}
+
 name := "chapter05_data_parallel_collections"
 
 // Add OS specific JavaFX dependencies
@@ -13,7 +15,7 @@ resolvers += Resolver.sonatypeRepo("snapshots")
 
 scalacOptions ++= Seq("-unchecked", "-deprecation", "-Xlint")
 
-libraryDependencies += Dependencies.scalaFx
+libraryDependencies ++= Seq(scalaFx, scalazCore, cats)
 
 // Add ScalaMeter to the testing Frameworks
 testFrameworks += new TestFramework("org.scalameter.ScalaMeterFramework")
@@ -21,5 +23,5 @@ testFrameworks += new TestFramework("org.scalameter.ScalaMeterFramework")
 // from scalameter user guide: Latest sbt versions run tests in parallel by default. If there are
 // multiple tests in project, than they will be executed in parallel during `sbt test` potentially
 // making results useless. To disable this behavior we need to add the following:
-parallelExecution in Test := false
+Test / parallelExecution := false
 logBuffered := false

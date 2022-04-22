@@ -1,42 +1,43 @@
 import sbt._
-import Keys._
 
 object Dependencies {
 
-  val scalaTestVersion = "3.0.5"
+  val scalaTestVersion = "3.2.11"
   val scalaCheckVersion = "1.14.0"
-  val commonDependencies: Seq[ModuleID] = Seq(
-    "org.scalactic" %% "scalactic" % scalaTestVersion,
-    "org.scalatest" %% "scalatest" % scalaTestVersion % "test",
-    "org.scalacheck" %% "scalacheck" % scalaCheckVersion % "test"
-  )
+  val akkaVersion = "2.6.0"
+  val monixVersion = "3.0.0"
+  val scalaAsyncVersion = "0.10.0"
+  val catsVersion = "2.2.0"
+  val rxScalaVersion = "0.27.0"
+  val scalazVersion = "7.3.2"
 
-  val akkaVersion = "2.4.19"
+  val commonDependencies: Seq[ModuleID] = Seq(
+  "org.scalactic" %% "scalactic" % scalaTestVersion,
+  "org.scalatest" %% "scalatest" % scalaTestVersion % "test",
+  "org.scalacheck" %% "scalacheck" % scalaCheckVersion % "test",
+  "org.scala-lang.modules" %% "scala-parallel-collections" % "1.0.0"
+  )
 
   val akkaDependencies: Seq[ModuleID] = commonDependencies ++ Seq(
-    "com.typesafe.akka" %% "akka-actor" % akkaVersion,
-    "com.typesafe.akka" %% "akka-slf4j" % akkaVersion,
-    "ch.qos.logback" % "logback-classic" % "1.2.3",
-    "com.typesafe.akka" %% "akka-testkit" % akkaVersion)
+  "com.typesafe.akka" %% "akka-actor" % akkaVersion,
+  "com.typesafe.akka" %% "akka-slf4j" % akkaVersion,
+  "ch.qos.logback" % "logback-classic" % "1.2.3",
+  "com.typesafe.akka" %% "akka-testkit" % akkaVersion)
 
-  val monixVersion = "2.3.0"
 
   val monixDependencies: Seq[ModuleID] = Seq(
-    "io.monix" %% "monix" % monixVersion,
-    "io.monix" %% "monix-cats" % monixVersion
+  "io.monix" %% "monix" % monixVersion
   )
-
-  //lowest stable version for scala 2.12
-  val scalaAsyncVersion = "0.9.6"
 
   val scalaAsync = "org.scala-lang.modules" %% "scala-async" % scalaAsyncVersion
 
-  //2.12 version of rxScala
-  val rxScalaVersion = "0.26.5"
-
   val rxScala = "io.reactivex" %% "rxscala" % rxScalaVersion
 
-  val scalaMeter = "com.storm-enroute" %% "scalameter" % "0.9"
-  
-  val scalaFx = "org.scalafx" %% "scalafx" % "11-R16"
+  val scalaMeter = "com.storm-enroute" %% "scalameter" % "0.19"
+
+  val scalaFx = "org.scalafx" %% "scalafx" % "12.0.2-R18"
+
+  val cats = "org.typelevel" %% "cats-core" % catsVersion
+
+  val scalazCore = "org.scalaz" %% "scalaz-core" % scalazVersion
 }

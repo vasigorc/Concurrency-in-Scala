@@ -32,3 +32,7 @@ class ParString(val str: String, parStringCombiner: ParStringCombiner = new ParS
 
   override def toString(): String = StringUtils.abbreviate(str, 20)
 }
+
+object ParString {
+  def apply(str: String): ParString = new ParString(str)
+}

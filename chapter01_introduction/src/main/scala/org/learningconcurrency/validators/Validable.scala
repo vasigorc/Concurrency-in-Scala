@@ -1,7 +1,9 @@
 package org.learningconcurrency.validators
 
-import java.net.URL
+import org.learningconcurrency.validators.Validable.int.validate
 
+import java.net.URL
+import scala.annotation.tailrec
 import scala.io.StdIn
 import scala.util.{Failure, Success, Try}
 
@@ -11,6 +13,7 @@ trait Validable[T] {
 
 object Validable {
   implicit val boolean: Validable[Boolean] = new Validable[Boolean] {
+    @tailrec
     def validate(input: String): Boolean = {
       val simplifiedInput = standardizeInput(input)
 
@@ -27,20 +30,19 @@ object Validable {
   }
 
 
-  implicit val int: Validable[Int] = new Validable[Int]{
-    def validate(input: String): Int = {
-      val simplifiedInput = standardizeInput(input)
+  implicit val int: Validable[Int] = (input: String) => {
+    val simplifiedInput = standardizeInput(input)
 
-      val attempt = Try(simplifiedInput toInt)
-      attempt match {
-        case Success(response) => response
-        case Failure(_) => validate(StdIn.readLine(s"$simplifiedInput is not a valid "
-          +"answer, please try again\n"))
-      }
+    val attempt = Try(simplifiedInput.toInt)
+    attempt match {
+      case Success(response) => response
+      case Failure(_) => validate(StdIn.readLine(s"$simplifiedInput is not a valid "
+        + "answer, please try again\n"))
     }
   }
 
   implicit val url: Validable[URL] = new Validable[URL] {
+    @tailrec
     override def validate(input: String): URL = {
       val simplifiedInput = standardizeInput(input)
 

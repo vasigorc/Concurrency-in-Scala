@@ -1,6 +1,7 @@
 package org.learningconcurrency.data_parallel_collections
 
 import org.apache.commons.lang3.RandomStringUtils
+import org.learningconcurrency.data_parallel_collections.parstring.ParString
 
 import scala.annotation.tailrec
 import scala.language.postfixOps
@@ -31,7 +32,7 @@ trait Ex02_CountWhitespacesPar extends RandomWhiteSpacedString {
       if (remainingProps.isEmpty) return accumulator
       val head = remainingProps.head
       val stringWithWhitespaces = pToString(head)
-      val actualNrWhitespaces = getTimedResult(stringWithWhitespaces.par.count(_ == ' ')).time
+      val actualNrWhitespaces = getTimedResult(ParString(stringWithWhitespaces).count(_ == ' ')).time
       //append new (p, runningTime) to the end of the vector
       helper(accumulator :+ ((head, actualNrWhitespaces)), remainingProps.tail)
     }

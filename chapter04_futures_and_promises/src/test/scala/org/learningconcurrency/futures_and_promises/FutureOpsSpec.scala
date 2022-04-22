@@ -1,6 +1,6 @@
 package org.learningconcurrency.futures_and_promises
 
-import org.scalatest.AsyncFunSpec
+import org.scalatest.funspec.AsyncFunSpec
 
 import scala.concurrent.Future
 

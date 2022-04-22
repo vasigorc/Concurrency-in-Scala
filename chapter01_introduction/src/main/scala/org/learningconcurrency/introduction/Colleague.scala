@@ -2,13 +2,13 @@ package org.learningconcurrency.introduction
 
 import java.time.LocalTime
 import java.util.UUID
-
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 import org.learningconcurrency.randomTime
 
 import scala.collection._
 import scala.concurrent.ExecutionContextExecutor
 import scala.concurrent.duration._
+import scala.language.postfixOps
 import scala.util.Random
 
 class Colleague(friends: Seq[String]) extends Actor with ActorLogging{

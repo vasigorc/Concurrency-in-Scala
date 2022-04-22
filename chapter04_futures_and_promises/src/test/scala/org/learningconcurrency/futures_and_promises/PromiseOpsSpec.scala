@@ -1,11 +1,11 @@
 package org.learningconcurrency.futures_and_promises
 
-import org.scalatest.AsyncFreeSpec
-import org.scalatest.Matchers
+import org.scalatest.freespec.AsyncFreeSpec
+
 import scala.concurrent.Promise
 import scala.concurrent.Future
 
-class PromiseOpsSpec extends AsyncFreeSpec with Matchers {
+class PromiseOpsSpec extends AsyncFreeSpec {
 
   "When calling compose with a function f as param on an original Promise" - {
     "and the returned Promise is completed" - {

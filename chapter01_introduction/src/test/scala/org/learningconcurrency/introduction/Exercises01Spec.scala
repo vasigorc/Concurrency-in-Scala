@@ -1,6 +1,9 @@
 package org.learningconcurrency.introduction
 
 import org.learningconcurrency.BaseSpec
+import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+
+import scala.language.postfixOps
 
 class Exercises01Spec extends BaseSpec {
 
