@@ -25,3 +25,4 @@ chapter01_introduction/bin/*
 .bloop
 .metals
 project/.bloop
+.bsp

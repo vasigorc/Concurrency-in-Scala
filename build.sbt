@@ -1,6 +1,6 @@
 ThisBuild / name := "learning concurrent programming in scala"
 ThisBuild / organization in ThisBuild := "ca.vgorcinschi"
-ThisBuild / scalaVersion := "2.12.10"
+ThisBuild / scalaVersion := "2.13.8"
 
 ThisBuild / version := "0.0.1"
 
